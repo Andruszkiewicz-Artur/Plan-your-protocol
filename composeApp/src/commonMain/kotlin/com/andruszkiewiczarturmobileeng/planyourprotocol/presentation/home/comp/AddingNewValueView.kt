@@ -13,12 +13,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.DataInfoModel
+import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.model.ProtocolModule
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.DataInfoRealizationDate
 
 @Composable
 fun AddingNewValueView(
-    dataInfo: DataInfoModel,
+    dataInfo: ProtocolModule,
     onClickShowPopUpOfReason: (Boolean) -> Unit = {  },
     onClickShowPopUpOfTimer: (Boolean) -> Unit = {  },
     onClickShowPopUpOfDate: (Boolean) -> Unit = {  },
@@ -58,7 +58,7 @@ fun AddingNewValueView(
                 when (dataInfo.state) {
                     DataInfoRealizationDate.Today -> {
                         OutlinedTextField(
-                            value = dataInfo.time,
+                            value = dataInfo.time?.toString() ?: "",
                             onValueChange = {},
                             enabled = false,
                             readOnly = true,
@@ -69,7 +69,7 @@ fun AddingNewValueView(
                     }
                     DataInfoRealizationDate.CAD -> {
                         OutlinedTextField(
-                            value = dataInfo.date,
+                            value = dataInfo.date?.toString() ?: "",
                             onValueChange = {},
                             enabled = false,
                             readOnly = true,
@@ -81,7 +81,7 @@ fun AddingNewValueView(
                         Spacer(Modifier.height(12.dp))
 
                         OutlinedTextField(
-                            value = dataInfo.resone,
+                            value = dataInfo.resone ?: "",
                             onValueChange = {},
                             enabled = false,
                             readOnly = true,

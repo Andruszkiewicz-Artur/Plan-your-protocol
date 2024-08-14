@@ -13,7 +13,7 @@ import com.andruszkiewiczarturmobileeng.planyourprotocol.unit.convertMillisToDat
 @Composable
 fun PopUpOfCalendar(
     onDismiss: () -> Unit,
-    onSave: (String?) -> Unit
+    onSave: (Long) -> Unit
 ) {
     val datePickerState = rememberDatePickerState()
 
@@ -21,7 +21,7 @@ fun PopUpOfCalendar(
         onDismissRequest = onDismiss,
         confirmButton = {
             TextButton(onClick = {
-                onSave(datePickerState.selectedDateMillis?.convertMillisToDate())
+                onSave(datePickerState.selectedDateMillis ?: 0)
                 onDismiss()
             }) {
                 Text("OK")

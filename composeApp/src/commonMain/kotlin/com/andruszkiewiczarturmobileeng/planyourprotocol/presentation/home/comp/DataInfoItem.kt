@@ -15,12 +15,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.DataInfoModel
+import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.model.ProtocolModule
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.DataInfoRealizationDate
 
 @Composable
 fun DataInfoItem(
-    dataInfo: DataInfoModel,
+    dataInfo: ProtocolModule,
     onClickEdit: () -> Unit,
     onClickDelete: () -> Unit
 ) {

@@ -25,7 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
-import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.DataInfoModel
+import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.model.ProtocolModule
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.comp.AddingNewValueView
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.comp.DataInfoItem
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.comp.PopUpOfCalendar
@@ -37,8 +37,8 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
 @Preview
 fun App() {
-    var dataInfo by remember { mutableStateOf(DataInfoModel()) }
-    val dataInfoList = remember { mutableStateListOf<DataInfoModel>() }
+    var dataInfo by remember { mutableStateOf(ProtocolModule()) }
+    val dataInfoList = remember { mutableStateListOf<ProtocolModule>() }
     var popUpOfReasonIsPresented by remember { mutableStateOf(false) }
     var popUpOfTimerPresented by remember { mutableStateOf(false) }
     var popUpOfDatePresented by remember { mutableStateOf(false) }
@@ -57,7 +57,7 @@ fun App() {
                         IconButton(
                             onClick = {
                                 val textToCopy = dataInfoList.joinToString(separator = "\n") {
-                                    "${it.id} - ${it.date}${if (it.resone.isNotEmpty()) " - ${it.resone}" else ""}"
+                                    "${it.id} - ${it.date}${if (it.resone != null) " - ${it.resone}" else ""}"
                                 }
                                 clipboardManager.setText(AnnotatedString(textToCopy))
                             }
@@ -98,9 +98,9 @@ fun App() {
                             dataInfo = dataInfo.copy(
                                 id = null,
                                 idDocument = "",
-                                time = "",
-                                date = "",
-                                resone = ""
+                                time = null,
+                                date = null,
+                                resone = null
                             )
                         },
                         onChangeValueIdDocument = { dataInfo = dataInfo.copy(idDocument = it) },
@@ -148,7 +148,7 @@ fun App() {
         PopUpOfCalendar(
             onDismiss = { popUpOfDatePresented = false },
             onSave = {
-                dataInfo = dataInfo.copy(date = it ?: "")
+                dataInfo = dataInfo.copy(date = it)
                 popUpOfDatePresented = false
             }
         )

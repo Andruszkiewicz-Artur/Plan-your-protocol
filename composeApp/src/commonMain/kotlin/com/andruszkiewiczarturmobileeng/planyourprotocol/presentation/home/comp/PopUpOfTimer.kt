@@ -35,7 +35,7 @@ import kotlinx.datetime.toLocalDateTime
 @Composable
 fun PopUpOfTimer(
     onDismiss: () -> Unit,
-    onSave: (String) -> Unit
+    onSave: (Int?) -> Unit
 ) {
     val currentDataTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
     var timerType by mutableStateOf(TimerType.Picker)
@@ -96,7 +96,7 @@ fun PopUpOfTimer(
 
                     TextButton(
                         onClick = {
-                            onSave("${timePickerState.hour}:${timePickerState.minute}")
+                            onSave(timePickerState.hour + timePickerState.minute * 60)
                         }
                     ) {
                         Text(text = "OK")
