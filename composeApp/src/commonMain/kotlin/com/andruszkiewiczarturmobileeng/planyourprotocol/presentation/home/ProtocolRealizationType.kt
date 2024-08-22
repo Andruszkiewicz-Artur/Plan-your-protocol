@@ -1,6 +1,6 @@
 package com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home
 
-enum class DataInfoRealizationDate {
+enum class ProtocolRealizationType {
     Today,
     CAD,
     PNA,

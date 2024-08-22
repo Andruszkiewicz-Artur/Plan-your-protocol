@@ -14,7 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.model.ProtocolModule
-import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.DataInfoRealizationDate
+import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.ProtocolRealizationType
 
 @Composable
 fun AddingNewValueView(
@@ -24,7 +24,7 @@ fun AddingNewValueView(
     onClickShowPopUpOfDate: (Boolean) -> Unit = {  },
     onClickAdd: () -> Unit = {  },
     onChangeValueIdDocument: (String) -> Unit = {  },
-    onClickDateOfRealization: (DataInfoRealizationDate) -> Unit = {  },
+    onClickDateOfRealization: (ProtocolRealizationType) -> Unit = {  },
     isEditing: Boolean = true
 ) {
     Column(
@@ -56,7 +56,7 @@ fun AddingNewValueView(
         AnimatedContent(dataInfo.state) {
             Column {
                 when (dataInfo.state) {
-                    DataInfoRealizationDate.Today -> {
+                    ProtocolRealizationType.Today -> {
                         OutlinedTextField(
                             value = dataInfo.time?.toString() ?: "",
                             onValueChange = {},
@@ -67,7 +67,7 @@ fun AddingNewValueView(
                                 .clickable { onClickShowPopUpOfTimer(true) }
                         )
                     }
-                    DataInfoRealizationDate.CAD -> {
+                    ProtocolRealizationType.CAD -> {
                         OutlinedTextField(
                             value = dataInfo.date?.toString() ?: "",
                             onValueChange = {},

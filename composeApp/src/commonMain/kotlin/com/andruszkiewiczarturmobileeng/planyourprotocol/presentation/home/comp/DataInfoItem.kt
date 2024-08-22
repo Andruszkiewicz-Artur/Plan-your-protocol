@@ -16,7 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.model.ProtocolModule
-import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.DataInfoRealizationDate
+import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.ProtocolRealizationType
 
 @Composable
 fun DataInfoItem(
@@ -32,10 +32,10 @@ fun DataInfoItem(
     ) {
         Text(
             text = "${dataInfo.idDocument} - " + when(dataInfo.state) {
-                DataInfoRealizationDate.Today -> dataInfo.time
-                DataInfoRealizationDate.CAD -> "${dataInfo.date} - ${dataInfo.resone}"
-                DataInfoRealizationDate.PNA -> dataInfo.state.name
-                DataInfoRealizationDate.CNA -> dataInfo.state.name
+                ProtocolRealizationType.Today -> dataInfo.time
+                ProtocolRealizationType.CAD -> "${dataInfo.date} - ${dataInfo.resone}"
+                ProtocolRealizationType.PNA -> dataInfo.state.name
+                ProtocolRealizationType.CNA -> dataInfo.state.name
             },
             modifier = Modifier
                 .padding(vertical = 4.dp)

@@ -29,9 +29,9 @@ kotlin {
         }
     }
 
-//    sourceSets.commonMain {
-//        kotlin.srcDir("build/generated/ksp/metadata")
-//    }
+    sourceSets.commonMain {
+        kotlin.srcDir("build/generated/ksp/metadata")
+    }
 
     sourceSets {
         androidMain.dependencies {
@@ -108,15 +108,18 @@ room {
 }
 
 dependencies {
-    implementation(libs.androidx.material3.android)
-    implementation(project(":composeApp"))
-    ksp(libs.room.compiler)
-//    add("kspCommonMainMetadata", libs.room.compiler)
+    add("kspCommonMainMetadata", libs.room.compiler)
 }
 
-//tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().configureEach {
-//    if (name != "kspCommonMainKotlinMetadata" ) {
-//        dependsOn("kspCommonMainKotlinMetadata")
-//    }
-//}
 
+dependencies {
+    implementation(libs.androidx.material3.android)
+//    implementation(project(":composeApp"))
+//    ksp(libs.room.compiler)
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().configureEach {
+    if (name != "kspCommonMainKotlinMetadata" ) {
+        dependsOn("kspCommonMainKotlinMetadata")
+    }
+}
