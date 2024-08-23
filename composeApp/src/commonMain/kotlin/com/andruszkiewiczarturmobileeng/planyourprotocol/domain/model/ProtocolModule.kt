@@ -5,7 +5,6 @@ import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.Proto
 import kotlinx.datetime.Clock
 
 data class ProtocolModule(
-    var id: Long? = null,
     var idDocument: String = "",
     var state: ProtocolRealizationType = ProtocolRealizationType.Today,
     var time: Int? = null,
@@ -13,7 +12,6 @@ data class ProtocolModule(
     var resone: String? = null
 ) {
     fun toEntity() = ProtocolEntity(
-            id = id,
             idDocument = idDocument,
             state = state,
             time = time,

@@ -15,6 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.model.ProtocolModule
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.ProtocolRealizationType
+import com.andruszkiewiczarturmobileeng.planyourprotocol.unit.convertMillisToDate
+import com.andruszkiewiczarturmobileeng.planyourprotocol.unit.convertToTime
 
 @Composable
 fun AddingNewValueView(
@@ -58,7 +60,7 @@ fun AddingNewValueView(
                 when (dataInfo.state) {
                     ProtocolRealizationType.Today -> {
                         OutlinedTextField(
-                            value = dataInfo.time?.toString() ?: "",
+                            value = dataInfo.time?.convertToTime() ?: "",
                             onValueChange = {},
                             enabled = false,
                             readOnly = true,
@@ -69,7 +71,7 @@ fun AddingNewValueView(
                     }
                     ProtocolRealizationType.CAD -> {
                         OutlinedTextField(
-                            value = dataInfo.date?.toString() ?: "",
+                            value = dataInfo.date?.convertMillisToDate() ?: "",
                             onValueChange = {},
                             enabled = false,
                             readOnly = true,
@@ -100,7 +102,13 @@ fun AddingNewValueView(
         Button(
             onClick = onClickAdd
         ) {
-            Text(text = if (isEditing) "Edit value" else "Add new value")
+            AnimatedContent(isEditing) { editing ->
+                if (editing) {
+                    Text(text = "Edit value")
+                } else {
+                    Text(text = "Add new value")
+                }
+            }
         }
     }
 }

@@ -46,7 +46,7 @@ fun HomePresentation(
                     IconButton(
                         onClick = {
                             val textToCopy = state.protocolsList.joinToString(separator = "\n") {
-                                "${it.id} - ${it.date}${if (it.resone != null) " - ${it.resone}" else ""}"
+                                "${it.idDocument} - ${it.date}${if (it.resone != null) " - ${it.resone}" else ""}"
                             }
                             clipboardManager.setText(AnnotatedString(textToCopy))
                         }
@@ -76,7 +76,7 @@ fun HomePresentation(
                     onClickAdd = { vm.onEvent(HomeEvent.SetProtocol) },
                     onChangeValueIdDocument = { vm.onEvent(HomeEvent.SetIdOfProtocol(it)) },
                     onClickDateOfRealization = { vm.onEvent(HomeEvent.SetTypeOfPlaningProtocol(it)) },
-                    isEditing = state.currentProtocol.id != null
+                    isEditing = state.isEditing
                 )
             }
 

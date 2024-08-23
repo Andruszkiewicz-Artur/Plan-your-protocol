@@ -33,7 +33,12 @@ class HomeViewModel(
                 }
             }
             is HomeEvent.SetDateOfProtocol -> _state.update { it.copy(currentProtocol = it.currentProtocol.copy(date = event.date)) }
-            is HomeEvent.SetIdOfProtocol -> _state.update { it.copy(currentProtocol = it.currentProtocol.copy(idDocument = event.idProtocol)) }
+            is HomeEvent.SetIdOfProtocol -> _state.update {
+                it.copy(
+                    currentProtocol = it.currentProtocol.copy(idDocument = event.idProtocol),
+                    isEditing = it.protocolsList.any { it.idDocument == event.idProtocol}
+                )
+            }
             HomeEvent.SetProtocol -> {
                 viewModelScope.launch {
                     repository.upsertProtocol(_state.value.currentProtocol)
