@@ -96,7 +96,7 @@ fun PopUpOfTimer(
 
                     TextButton(
                         onClick = {
-                            onSave(timePickerState.hour + timePickerState.minute * 60)
+                            onSave(timePickerState.hour * 60 + timePickerState.minute)
                         }
                     ) {
                         Text(text = "OK")
