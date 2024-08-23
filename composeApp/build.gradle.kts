@@ -114,8 +114,6 @@ dependencies {
 
 dependencies {
     implementation(libs.androidx.material3.android)
-//    implementation(project(":composeApp"))
-//    ksp(libs.room.compiler)
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().configureEach {

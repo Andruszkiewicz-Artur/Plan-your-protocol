@@ -1,6 +1,5 @@
 package com.andruszkiewiczarturmobileeng.planyourprotocol.di
 
-import com.andruszkiewiczarturmobileeng.planyourprotocol.data.ProtocolDatabase
 import com.andruszkiewiczarturmobileeng.planyourprotocol.data.ProtocolRepositoryImpl
 import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.repository.ProtocolRepository
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.HomeViewModel
