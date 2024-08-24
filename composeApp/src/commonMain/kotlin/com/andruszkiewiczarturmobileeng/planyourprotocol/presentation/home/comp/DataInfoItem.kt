@@ -9,10 +9,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Remove
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.model.ProtocolModule
@@ -23,25 +25,40 @@ import com.andruszkiewiczarturmobileeng.planyourprotocol.unit.convertToTime
 @Composable
 fun DataInfoItem(
     dataInfo: ProtocolModule,
+    onClickSelect: (Boolean) -> Unit,
     onClickEdit: () -> Unit,
     onClickDelete: () -> Unit
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 8.dp)
     ) {
-        Text(
-            text = "${dataInfo.idDocument} - " + when(dataInfo.state) {
-                ProtocolRealizationType.Today -> dataInfo.time?.convertToTime()
-                ProtocolRealizationType.CAD -> "CAD ${dataInfo.date?.convertMillisToDate()} - ${dataInfo.resone}"
-                ProtocolRealizationType.PNA -> dataInfo.state.name
-                ProtocolRealizationType.CNA -> dataInfo.state.name
-            },
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .padding(vertical = 4.dp)
-        )
+                .fillMaxWidth(0.7f)
+        ) {
+            Checkbox(
+                checked = dataInfo.isSelected,
+                onCheckedChange = {
+                    onClickSelect(it)
+                }
+            )
+
+            Text(
+                text = "${dataInfo.idDocument} - " + when(dataInfo.state) {
+                    ProtocolRealizationType.Today -> dataInfo.time?.convertToTime()
+                    ProtocolRealizationType.CAD -> "CAD ${dataInfo.date?.convertMillisToDate()} - ${dataInfo.resone}"
+                    ProtocolRealizationType.PNA -> dataInfo.state.name
+                    ProtocolRealizationType.CNA -> dataInfo.state.name
+                },
+                modifier = Modifier
+                    .padding(vertical = 4.dp)
+            )
+        }
 
         Spacer(
             modifier = Modifier

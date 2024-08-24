@@ -9,7 +9,8 @@ data class ProtocolModule(
     var state: ProtocolRealizationType = ProtocolRealizationType.Today,
     var time: Int? = null,
     var date: Long? = null,
-    var resone: String? = null
+    var resone: String? = null,
+    var isSelected: Boolean = false
 ) {
     fun toEntity() = ProtocolEntity(
             idDocument = idDocument,

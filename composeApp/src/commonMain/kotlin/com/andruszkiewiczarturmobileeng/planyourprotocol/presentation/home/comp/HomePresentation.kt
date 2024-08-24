@@ -28,7 +28,6 @@ import org.koin.core.annotation.KoinExperimentalAPI
 @OptIn(ExperimentalMaterial3Api::class, KoinExperimentalAPI::class)
 @Composable
 fun HomePresentation(
-    modifier: Modifier = Modifier,
     vm: HomeViewModel = koinViewModel()
 ) {
     val state = vm.state.collectAsState().value
@@ -45,8 +44,9 @@ fun HomePresentation(
                 actions = {
                     IconButton(
                         onClick = {
-                            val textToCopy = state.protocolsList.joinToString(separator = "\n") {
-                                "${it.idDocument} - ${it.date}${if (it.resone != null) " - ${it.resone}" else ""}"
+                            val textToCopy = state.protocolsList.joinToString {
+                                if (it.isSelected) "${it.idDocument} - ${it.date}${if (it.resone != null) " - ${it.resone}" else ""}\n"
+                                else ""
                             }
                             clipboardManager.setText(AnnotatedString(textToCopy))
                         }
@@ -80,14 +80,15 @@ fun HomePresentation(
                 )
             }
 
-            items(state.protocolsList) {
+            items(state.protocolsList) { protocol ->
                 DataInfoItem(
-                    dataInfo = it,
-                    onClickDelete = { vm.onEvent(HomeEvent.DeleteProtocol(it)) },
-                    onClickEdit = { vm.onEvent(HomeEvent.ChooseProtocol(it)) }
+                    dataInfo = protocol,
+                    onClickDelete = { vm.onEvent(HomeEvent.DeleteProtocol(protocol)) },
+                    onClickEdit = { vm.onEvent(HomeEvent.ChooseProtocol(protocol)) },
+                    onClickSelect = {vm.onEvent(HomeEvent.SelectProtocol(protocol, it))}
                 )
 
-                if (state.protocolsList.last() != it) {
+                if (state.protocolsList.last() != protocol) {
                     HorizontalDivider()
                 }
             }

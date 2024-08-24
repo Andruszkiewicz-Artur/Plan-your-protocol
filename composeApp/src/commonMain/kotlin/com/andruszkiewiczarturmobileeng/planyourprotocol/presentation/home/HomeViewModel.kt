@@ -48,6 +48,14 @@ class HomeViewModel(
             is HomeEvent.SetReasonOfProtocol -> _state.update { it.copy(currentProtocol = it.currentProtocol.copy(resone = event.reason)) }
             is HomeEvent.SetTimeOfProtocol -> _state.update { it.copy(currentProtocol = it.currentProtocol.copy(time = event.time)) }
             is HomeEvent.SetTypeOfPlaningProtocol -> _state.update { it.copy(currentProtocol = it.currentProtocol.copy(state = event.type)) }
+            is HomeEvent.SelectProtocol -> {
+                _state.update { it.copy(
+                    protocolsList = it.protocolsList.map {
+                        if (it.idDocument == event.protocol.idDocument) it.copy(isSelected = event.isSelected)
+                        else it
+                    }
+                ) }
+            }
         }
     }
 
