@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "a78a5cad311216a8e3b0fdf2f2bffb19",
+    "identityHash": "31e05a46ff4307019106a4fb7a0a577e",
     "entities": [
       {
         "tableName": "Protocols",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`idDocument` TEXT NOT NULL, `state` TEXT NOT NULL, `time` INTEGER, `date` INTEGER NOT NULL, `resone` TEXT, PRIMARY KEY(`idDocument`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`idDocument` TEXT NOT NULL, `state` TEXT NOT NULL, `time` INTEGER, `date` INTEGER, `editingDate` INTEGER NOT NULL, `resone` TEXT, PRIMARY KEY(`idDocument`))",
         "fields": [
           {
             "fieldPath": "idDocument",
@@ -28,6 +28,11 @@
           {
             "fieldPath": "date",
             "columnName": "date",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "editingDate",
+            "columnName": "editingDate",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -47,7 +52,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a78a5cad311216a8e3b0fdf2f2bffb19')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '31e05a46ff4307019106a4fb7a0a577e')"
     ]
   }
 }

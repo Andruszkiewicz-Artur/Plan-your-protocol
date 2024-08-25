@@ -4,11 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.model.ProtocolModule
 import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.repository.ProtocolRepository
+import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.ProtocolRealizationType.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 
 class HomeViewModel(
     private val repository: ProtocolRepository
@@ -40,9 +42,22 @@ class HomeViewModel(
                 )
             }
             HomeEvent.SetProtocol -> {
+                val currentProtocol = _state.value.currentProtocol
+                var shouldProceed = true
+
                 viewModelScope.launch {
-                    repository.upsertProtocol(_state.value.currentProtocol)
-                    _state.update { it.copy(currentProtocol = ProtocolModule()) }
+                    when(currentProtocol.state) {
+                        Today -> if (currentProtocol.idDocument.isBlank() && currentProtocol.time == null) shouldProceed = false
+                        CAD -> if (currentProtocol.idDocument.isBlank() && currentProtocol.date == null && currentProtocol.resone == null) shouldProceed = false
+                        else -> if (currentProtocol.idDocument.isBlank()) shouldProceed = false
+                    }
+
+                    if (shouldProceed) {
+                        repository.upsertProtocol(_state.value.currentProtocol.copy(
+                            editingDate = Clock.System.now().toEpochMilliseconds()
+                        ))
+                        _state.update { it.copy(currentProtocol = ProtocolModule()) }
+                    }
                 }
             }
             is HomeEvent.SetReasonOfProtocol -> _state.update { it.copy(currentProtocol = it.currentProtocol.copy(resone = event.reason)) }

@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ProtocolDao {
 
-    @Query("SELECT * FROM Protocols")
+    @Query("SELECT * FROM Protocols ORDER BY editingDate DESC")
     fun getAllProtocols(): Flow<List<ProtocolEntity>>
 
     @Upsert

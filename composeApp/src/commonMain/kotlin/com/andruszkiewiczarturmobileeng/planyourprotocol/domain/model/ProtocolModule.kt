@@ -10,13 +10,15 @@ data class ProtocolModule(
     var time: Int? = null,
     var date: Long? = null,
     var resone: String? = null,
+    var editingDate: Long? = null,
     var isSelected: Boolean = false
 ) {
     fun toEntity() = ProtocolEntity(
             idDocument = idDocument,
             state = state,
             time = time,
-            date = date ?: Clock.System.now().toEpochMilliseconds(),
-            resone = resone
+            date = date,
+            resone = resone,
+            editingDate = editingDate ?: Clock.System.now().toEpochMilliseconds()
         )
 }

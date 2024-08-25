@@ -11,7 +11,8 @@ data class ProtocolEntity(
     var idDocument: String,
     var state: ProtocolRealizationType,
     var time: Int?,
-    var date: Long,
+    var date: Long?,
+    var editingDate: Long,
     var resone: String?
 ) {
     fun toDomain(): ProtocolModule = ProtocolModule(idDocument, state, time, date, resone)
