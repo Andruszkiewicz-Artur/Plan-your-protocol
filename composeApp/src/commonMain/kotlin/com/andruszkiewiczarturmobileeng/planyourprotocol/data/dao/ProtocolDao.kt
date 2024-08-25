@@ -10,8 +10,13 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ProtocolDao {
 
-    @Query("SELECT * FROM Protocols ORDER BY editingDate DESC")
-    fun getAllProtocols(): Flow<List<ProtocolEntity>>
+    @Query("""
+        SELECT * FROM Protocols
+        WHERE czas BETWEEN (strftime('%s', 'now', 'start of day') * 1000)
+        AND (strftime('%s', 'now', 'start of day', '+1 day') * 1000 - 1)
+        ORDER BY editingDate DESC
+    """)
+    fun getAllTodaysProtocols(): Flow<List<ProtocolEntity>>
 
     @Upsert
     suspend fun upsertProtocol(protocol: ProtocolEntity)

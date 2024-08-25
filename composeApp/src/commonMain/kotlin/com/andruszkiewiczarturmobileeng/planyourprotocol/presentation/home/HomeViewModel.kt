@@ -76,7 +76,7 @@ class HomeViewModel(
 
     private fun getAllProtocols() {
         viewModelScope.launch {
-            repository.getAllProtocols().collect { protocols ->
+            repository.getAllTodaysProtocols().collect { protocols ->
                 _state.update { it.copy(protocolsList = protocols) }
             }
         }
