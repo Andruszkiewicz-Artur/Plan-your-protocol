@@ -2,6 +2,7 @@ package com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.model.ProtocolModule
 import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.repository.ProtocolRepository
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.ProtocolRealizationType.*
@@ -21,6 +22,7 @@ class HomeViewModel(
 
     init {
         getAllProtocols()
+        getCountOfProtocolsInThisMonth()
     }
 
     fun onEvent(event: HomeEvent) {
@@ -42,20 +44,36 @@ class HomeViewModel(
                 )
             }
             HomeEvent.SetProtocol -> {
-                val currentProtocol = _state.value.currentProtocol
-                var shouldProceed = true
+                var currentProtocol = _state.value.currentProtocol
+                var shouldProceed = false
 
                 viewModelScope.launch {
                     when(currentProtocol.state) {
-                        Today -> if (currentProtocol.idDocument.isBlank() && currentProtocol.time == null) shouldProceed = false
-                        CAD -> if (currentProtocol.idDocument.isBlank() && currentProtocol.date == null && currentProtocol.resone == null) shouldProceed = false
-                        else -> if (currentProtocol.idDocument.isBlank()) shouldProceed = false
+                        Today -> if (currentProtocol.idDocument.isNotBlank() && currentProtocol.time != null) {
+                            shouldProceed = true
+                            currentProtocol = currentProtocol.copy(
+                                date = null,
+                                resone = null
+                            )
+                        }
+                        CAD -> if (currentProtocol.idDocument.isNotBlank() && currentProtocol.date != null && currentProtocol.resone != null) {
+                            shouldProceed = true
+                            currentProtocol = currentProtocol.copy(
+                                time = null
+                            )
+                        }
+                        else -> if (currentProtocol.idDocument.isNotBlank()) {
+                            shouldProceed = true
+                            currentProtocol = currentProtocol.copy(
+                                date = null,
+                                resone = null,
+                                time = null
+                            )
+                        }
                     }
 
                     if (shouldProceed) {
-                        repository.upsertProtocol(_state.value.currentProtocol.copy(
-                            editingDate = Clock.System.now().toEpochMilliseconds()
-                        ))
+                        repository.upsertProtocol(currentProtocol)
                         _state.update { it.copy(currentProtocol = ProtocolModule()) }
                     }
                 }
@@ -76,8 +94,16 @@ class HomeViewModel(
 
     private fun getAllProtocols() {
         viewModelScope.launch {
-            repository.getAllTodaysProtocols().collect { protocols ->
+            repository.getAllTodayProtocols().collect { protocols ->
                 _state.update { it.copy(protocolsList = protocols) }
+            }
+        }
+    }
+
+    private fun getCountOfProtocolsInThisMonth() {
+        viewModelScope.launch {
+            repository.getCountOfAllProtocolsInThisMonth().collect { count ->
+                _state.update { it.copy(protocolsInThisMonth = count) }
             }
         }
     }

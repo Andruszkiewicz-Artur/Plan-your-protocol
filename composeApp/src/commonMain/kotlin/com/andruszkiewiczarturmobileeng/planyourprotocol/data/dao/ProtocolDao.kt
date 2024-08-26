@@ -9,19 +9,34 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ProtocolDao {
-
     @Query("""
         SELECT * FROM Protocols
-        WHERE czas BETWEEN (strftime('%s', 'now', 'start of day') * 1000)
-        AND (strftime('%s', 'now', 'start of day', '+1 day') * 1000 - 1)
-        ORDER BY editingDate DESC
+        WHERE
+            (
+                (editingDate BETWEEN (strftime('%s', 'now', 'start of month') * 1000)
+                AND (strftime('%s', 'now', 'start of month', '+1 month', '-1 second') * 1000))
+                OR
+                (date BETWEEN (strftime('%s', 'now', 'start of month') * 1000)
+                AND (strftime('%s', 'now', 'start of month', '+1 month', '-1 second') * 1000))
+            )
+            OR
+            (state = 'PNA' OR state = 'CAD')
+        ORDER BY editingDate DESC, date DESC
     """)
-    fun getAllTodaysProtocols(): Flow<List<ProtocolEntity>>
+    fun getAllTodayProtocols(): Flow<List<ProtocolEntity>>
+
+    @Query("""
+        SELECT COUNT(*) FROM Protocols
+        WHERE
+            time IS NOT NULL AND
+            editingDate BETWEEN (strftime('%s', 'now', 'start of month') * 1000)
+            AND (strftime('%s', 'now', 'start of month', '+1 month', '-1 second') * 1000)
+    """)
+    fun getCountOfAllProtocolsInThisMonth(): Flow<Int>
 
     @Upsert
     suspend fun upsertProtocol(protocol: ProtocolEntity)
 
     @Delete
     suspend fun deleteProtocol(protocol: ProtocolEntity)
-
 }

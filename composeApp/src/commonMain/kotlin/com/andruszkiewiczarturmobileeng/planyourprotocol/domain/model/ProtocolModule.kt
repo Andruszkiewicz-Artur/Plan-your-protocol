@@ -19,6 +19,6 @@ data class ProtocolModule(
             time = time,
             date = date,
             resone = resone,
-            editingDate = editingDate ?: Clock.System.now().toEpochMilliseconds()
+            editingDate = Clock.System.now().toEpochMilliseconds()
         )
 }

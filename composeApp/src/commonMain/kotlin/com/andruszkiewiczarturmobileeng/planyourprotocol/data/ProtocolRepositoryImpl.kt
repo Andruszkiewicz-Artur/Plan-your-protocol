@@ -6,7 +6,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class ProtocolRepositoryImpl(private val db: ProtocolDatabase): ProtocolRepository {
-    override fun getAllTodaysProtocols(): Flow<List<ProtocolModule>> = db.protocolDao().getAllTodaysProtocols().map { it.map { it.toDomain() } }
+    override fun getAllTodayProtocols(): Flow<List<ProtocolModule>> = db.protocolDao().getAllTodayProtocols().map { it.map { it.toDomain() } }
+
+    override fun getCountOfAllProtocolsInThisMonth(): Flow<Int> = db.protocolDao().getCountOfAllProtocolsInThisMonth()
 
     override suspend fun upsertProtocol(protocol: ProtocolModule) = db.protocolDao().upsertProtocol(protocol.toEntity())
 

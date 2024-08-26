@@ -4,7 +4,8 @@ import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.model.ProtocolMo
 import kotlinx.coroutines.flow.Flow
 
 interface ProtocolRepository {
-    fun getAllTodaysProtocols(): Flow<List<ProtocolModule>>
+    fun getAllTodayProtocols(): Flow<List<ProtocolModule>>
+    fun getCountOfAllProtocolsInThisMonth(): Flow<Int>
     suspend fun upsertProtocol(protocol: ProtocolModule)
     suspend fun deleteProtocol(protocol: ProtocolModule)
 }
