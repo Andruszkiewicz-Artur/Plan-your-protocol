@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kspCompose)
     alias(libs.plugins.room)
+    alias(libs.plugins.kotlinCocoapods)
 }
 
 kotlin {
@@ -31,6 +32,22 @@ kotlin {
 
     sourceSets.commonMain {
         kotlin.srcDir("build/generated/ksp/metadata")
+    }
+
+    cocoapods {
+        summary = "Some description for the Shared Module"
+        homepage = "Link to the Shared Module homepage"
+        version = "1.0"
+        ios.deploymentTarget = "17.4"
+        podfile = project.file("../iosApp/Podfile")
+        framework {
+            baseName = "shared"
+            isStatic = true
+        }
+        pod("lottie-ios") {
+            version = "4.4.3"
+            linkOnly = true
+        }
     }
 
     sourceSets {
@@ -113,7 +130,7 @@ dependencies {
 
 
 dependencies {
-    implementation(libs.androidx.material3.android)
+    add("kspCommonMainMetadata", libs.room.compiler)
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().configureEach {
