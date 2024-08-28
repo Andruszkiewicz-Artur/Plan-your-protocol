@@ -54,7 +54,11 @@ fun HomePresentation(
                 actions = {
                     IconButton(
                         onClick = {
-                            vm.onEvent(HomeEvent.ClickCopyData(clipboardManager))
+                            val textToCopy = state.protocolsList.joinToString {
+                                if (it.isSelected) "${it.idDocument} - ${it.date}${if (it.resone != null) " - ${it.resone}" else ""}\n"
+                                else ""
+                            }
+                            clipboardManager.setText(AnnotatedString(textToCopy))
                         }
                     ) {
                         Icon(

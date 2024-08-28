@@ -1,6 +1,5 @@
 package com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home
 
-import androidx.compose.ui.platform.ClipboardManager
 import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.model.ProtocolModule
 
 sealed class HomeEvent {
@@ -15,7 +14,6 @@ sealed class HomeEvent {
     data class SetTimeOfProtocol(val time: Int?): HomeEvent()
     data class SetDateOfProtocol(val date: Long?): HomeEvent()
     data class SetReasonOfProtocol(val reason: String): HomeEvent()
-    data class ClickCopyData(val clipboardManager: ClipboardManager): HomeEvent()
 
     //Protocol Manager
     data class ChooseProtocol(val protocol: ProtocolModule): HomeEvent()
