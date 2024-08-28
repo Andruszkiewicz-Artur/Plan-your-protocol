@@ -1,11 +1,14 @@
 package com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home
 
+import androidx.compose.ui.text.AnnotatedString
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.model.ProtocolModule
 import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.repository.ProtocolRepository
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.ProtocolRealizationType.CAD
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.ProtocolRealizationType.Today
+import com.andruszkiewiczarturmobileeng.planyourprotocol.unit.convertMillisToDate
+import com.andruszkiewiczarturmobileeng.planyourprotocol.unit.convertToTime
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -96,6 +99,19 @@ class HomeViewModel(
                     protocolsList = it.protocolsList.map { it.copy(isSelected = event.select) },
                     isAllSelected = event.select
                 ) }
+            }
+            is HomeEvent.ClickCopyData -> {
+                val textToCopy = _state.value.protocolsList
+                    .mapNotNull { if (it.isSelected) it else null}
+                    .joinToString {
+                        "${it.idDocument} - " + when(it.state) {
+                            Today -> it.time?.convertToTime()
+                            CAD -> "CAD ${it.date?.convertMillisToDate()} - ${it.resone}"
+                            else -> it.state.name
+                        } + "\n"
+                    }.replace(", ", "")
+
+                event.clipboardManager.setText(AnnotatedString(textToCopy))
             }
         }
     }
