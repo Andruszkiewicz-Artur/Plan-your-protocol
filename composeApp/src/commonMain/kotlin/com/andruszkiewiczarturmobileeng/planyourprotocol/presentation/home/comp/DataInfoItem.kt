@@ -52,8 +52,7 @@ fun DataInfoItem(
                 text = "${dataInfo.idDocument} - " + when(dataInfo.state) {
                     ProtocolRealizationType.Today -> dataInfo.time?.convertToTime()
                     ProtocolRealizationType.CAD -> "CAD ${dataInfo.date?.convertMillisToDate()} - ${dataInfo.resone}"
-                    ProtocolRealizationType.PNA -> dataInfo.state.name
-                    ProtocolRealizationType.CNA -> dataInfo.state.name
+                    else -> dataInfo.state.name
                 },
                 modifier = Modifier
                     .padding(vertical = 4.dp)
