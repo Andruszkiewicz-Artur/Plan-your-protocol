@@ -9,5 +9,6 @@ data class HomeState(
     val isPresentedTimer: Boolean = false,
     val isPresentedCalendar: Boolean = false,
     val isEditing: Boolean = false,
-    val protocolsInThisMonth: Int = 0
+    val protocolsInThisMonth: Int = 0,
+    val isAllSelected: Boolean = false
 )

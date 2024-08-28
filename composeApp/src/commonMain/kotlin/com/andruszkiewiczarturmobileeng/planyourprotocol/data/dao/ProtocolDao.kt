@@ -13,14 +13,14 @@ interface ProtocolDao {
         SELECT * FROM Protocols
         WHERE
             (
-                (editingDate BETWEEN (strftime('%s', 'now', 'start of month') * 1000)
-                AND (strftime('%s', 'now', 'start of month', '+1 month', '-1 second') * 1000))
+                (editingDate BETWEEN (strftime('%s', 'now', 'start of day') * 1000)
+                AND (strftime('%s', 'now', 'start of day', '+1 day', '-1 second') * 1000))
                 OR
-                (date BETWEEN (strftime('%s', 'now', 'start of month') * 1000)
-                AND (strftime('%s', 'now', 'start of month', '+1 month', '-1 second') * 1000))
+                (date BETWEEN (strftime('%s', 'now', 'start of day') * 1000)
+                AND (strftime('%s', 'now', 'start of day', '+1 day', '-1 second') * 1000))
             )
             OR
-            (state = 'PNA' OR state = 'CAD')
+            (state = 'PNA' OR state = 'CNA')
         ORDER BY editingDate DESC, date DESC
     """)
     fun getAllTodayProtocols(): Flow<List<ProtocolEntity>>

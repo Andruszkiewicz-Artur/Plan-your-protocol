@@ -1,5 +1,6 @@
 package com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.comp
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,13 +23,13 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.HomeEvent
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.HomeViewModel
@@ -94,7 +95,8 @@ fun HomePresentation(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp)
+                        .padding(horizontal = 16.dp)
+                        .padding(top = 16.dp)
                 ) {
                     Text(
                         text = "Today's Protocols",
@@ -119,6 +121,28 @@ fun HomePresentation(
                             text = "${state.protocolsInThisMonth}",
                             style = MaterialTheme.typography.labelMedium
                         )
+                    }
+                }
+
+                AnimatedVisibility(
+                    state.protocolsList.isNotEmpty(),
+                    modifier = Modifier
+                        .padding(start = 8.dp)
+                ) {
+                    TextButton(
+                        onClick = { vm.onEvent(HomeEvent.ChangeAllSelection(!state.isAllSelected)) }
+                    ) {
+                        AnimatedContent(state.isAllSelected) { isSelected ->
+                            if (isSelected) {
+                                Text(
+                                    text = "Unselect All"
+                                )
+                            } else {
+                                Text(
+                                    text = "SelectAll"
+                                )
+                            }
+                        }
                     }
                 }
 

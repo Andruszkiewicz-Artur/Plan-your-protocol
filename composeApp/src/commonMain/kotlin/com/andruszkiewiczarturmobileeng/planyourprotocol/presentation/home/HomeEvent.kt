@@ -19,5 +19,6 @@ sealed class HomeEvent {
     data class ChooseProtocol(val protocol: ProtocolModule): HomeEvent()
     data class DeleteProtocol(val protocol: ProtocolModule): HomeEvent()
     data class SelectProtocol(val protocol: ProtocolModule, val isSelected: Boolean): HomeEvent()
+    data class ChangeAllSelection(val select: Boolean): HomeEvent()
     data object SetProtocol: HomeEvent()
 }

@@ -2,16 +2,14 @@ package com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.model.ProtocolModule
 import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.repository.ProtocolRepository
-import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.ProtocolRealizationType.*
+import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.ProtocolRealizationType.CAD
+import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.ProtocolRealizationType.Today
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 
 class HomeViewModel(
     private val repository: ProtocolRepository
@@ -87,6 +85,16 @@ class HomeViewModel(
                         if (it.idDocument == event.protocol.idDocument) it.copy(isSelected = event.isSelected)
                         else it
                     }
+                ) }
+
+                _state.update { it.copy(
+                    isAllSelected = it.protocolsList.all { it.isSelected }
+                ) }
+            }
+            is HomeEvent.ChangeAllSelection -> {
+                _state.update { it.copy(
+                    protocolsList = it.protocolsList.map { it.copy(isSelected = event.select) },
+                    isAllSelected = event.select
                 ) }
             }
         }
