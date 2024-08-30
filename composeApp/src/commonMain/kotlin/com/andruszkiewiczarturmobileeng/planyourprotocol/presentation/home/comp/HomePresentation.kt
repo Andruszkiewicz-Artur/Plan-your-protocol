@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -53,15 +55,29 @@ fun HomePresentation(
                     )
                 },
                 actions = {
-                    IconButton(
-                        onClick = {
-                            vm.onEvent(HomeEvent.ClickCopyData(clipboardManager))
+                    AnimatedContent(state.isPresentedAddNewProtocol) { isPresented ->
+                        when(isPresented) {
+                            true -> {
+                                IconButton(
+                                    onClick = { vm.onEvent(HomeEvent.ClickPresentAddNewValue) }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Filled.ArrowUpward,
+                                        contentDescription = null
+                                    )
+                                }
+                            }
+                            false -> {
+                                IconButton(
+                                    onClick = { vm.onEvent(HomeEvent.ClickPresentAddNewValue) }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Filled.ArrowDownward,
+                                        contentDescription = null
+                                    )
+                                }
+                            }
                         }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.ContentCopy,
-                            contentDescription = null
-                        )
                     }
                 }
             )
@@ -75,16 +91,18 @@ fun HomePresentation(
                 .padding(padding)
         ) {
             item {
-                AddingNewValueView(
-                    dataInfo = state.currentProtocol,
-                    onClickShowPopUpOfReason = { vm.onEvent(HomeEvent.ChangeStatusOfPopUpOfReason(it)) },
-                    onClickShowPopUpOfTimer = { vm.onEvent(HomeEvent.ChangeStatusOfPopUpOfTimer(it)) },
-                    onClickShowPopUpOfDate = { vm.onEvent(HomeEvent.ChangeStatusOfPopUpOfCalendar(it))  },
-                    onClickAdd = { vm.onEvent(HomeEvent.SetProtocol) },
-                    onChangeValueIdDocument = { vm.onEvent(HomeEvent.SetIdOfProtocol(it)) },
-                    onClickDateOfRealization = { vm.onEvent(HomeEvent.SetTypeOfPlaningProtocol(it)) },
-                    isEditing = state.isEditing
-                )
+                AnimatedVisibility(state.isPresentedAddNewProtocol) {
+                    AddingNewValueView(
+                        dataInfo = state.currentProtocol,
+                        onClickShowPopUpOfReason = { vm.onEvent(HomeEvent.ChangeStatusOfPopUpOfReason(it)) },
+                        onClickShowPopUpOfTimer = { vm.onEvent(HomeEvent.ChangeStatusOfPopUpOfTimer(it)) },
+                        onClickShowPopUpOfDate = { vm.onEvent(HomeEvent.ChangeStatusOfPopUpOfCalendar(it))  },
+                        onClickAdd = { vm.onEvent(HomeEvent.SetProtocol) },
+                        onChangeValueIdDocument = { vm.onEvent(HomeEvent.SetIdOfProtocol(it)) },
+                        onClickDateOfRealization = { vm.onEvent(HomeEvent.SetTypeOfPlaningProtocol(it)) },
+                        isEditing = state.isEditing
+                    )
+                }
 
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -123,21 +141,40 @@ fun HomePresentation(
                 AnimatedVisibility(
                     state.protocolsList.isNotEmpty(),
                     modifier = Modifier
-                        .padding(start = 8.dp)
+                        .padding(horizontal = 8.dp)
+                        .fillMaxWidth()
                 ) {
-                    TextButton(
-                        onClick = { vm.onEvent(HomeEvent.ChangeAllSelection(!state.isAllSelected)) }
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier
+                            .fillMaxWidth()
                     ) {
-                        AnimatedContent(state.isAllSelected) { isSelected ->
-                            if (isSelected) {
-                                Text(
-                                    text = "Unselect All"
-                                )
-                            } else {
-                                Text(
-                                    text = "SelectAll"
-                                )
+                        TextButton(
+                            onClick = { vm.onEvent(HomeEvent.ChangeAllSelection(!state.isAllSelected)) }
+                        ) {
+                            AnimatedContent(state.isAllSelected) { isSelected ->
+                                if (isSelected) {
+                                    Text(
+                                        text = "Unselect All"
+                                    )
+                                } else {
+                                    Text(
+                                        text = "Select All"
+                                    )
+                                }
                             }
+                        }
+
+
+                        IconButton(
+                            onClick = {
+                                vm.onEvent(HomeEvent.ClickCopyData(clipboardManager))
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.ContentCopy,
+                                contentDescription = null
+                            )
                         }
                     }
                 }
@@ -160,7 +197,7 @@ fun HomePresentation(
 
             items(state.protocolsList) { protocol ->
                 DataInfoItem(
-                    dataInfo = protocol,
+                    protocol = protocol,
                     onClickDelete = { vm.onEvent(HomeEvent.DeleteProtocol(protocol)) },
                     onClickEdit = { vm.onEvent(HomeEvent.ChooseProtocol(protocol)) },
                     onClickSelect = {vm.onEvent(HomeEvent.SelectProtocol(protocol, it))}

@@ -6,13 +6,18 @@ import androidx.lifecycle.viewModelScope
 import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.model.ProtocolModule
 import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.repository.ProtocolRepository
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.ProtocolRealizationType.CAD
+import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.ProtocolRealizationType.Canceled
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.ProtocolRealizationType.Today
 import com.andruszkiewiczarturmobileeng.planyourprotocol.unit.convertMillisToDate
 import com.andruszkiewiczarturmobileeng.planyourprotocol.unit.convertToTime
+import com.andruszkiewiczarturmobileeng.planyourprotocol.unit.isTodayValue
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 class HomeViewModel(
     private val repository: ProtocolRepository
@@ -20,6 +25,8 @@ class HomeViewModel(
 
     private val _state = MutableStateFlow(HomeState())
     val state: StateFlow<HomeState> get() = _state
+
+    private val _todayDateDay = Clock.System.now().toLocalDateTime(TimeZone.UTC).dayOfMonth
 
     init {
         getAllProtocols()
@@ -103,15 +110,21 @@ class HomeViewModel(
             is HomeEvent.ClickCopyData -> {
                 val textToCopy = _state.value.protocolsList
                     .mapNotNull { if (it.isSelected) it else null}
-                    .joinToString {
+                    .joinToString("\n") {
                         "${it.idDocument} - " + when(it.state) {
                             Today -> it.time?.convertToTime()
                             CAD -> "CAD ${it.date?.convertMillisToDate()} - ${it.resone}"
+                            Canceled -> "Anulowane"
                             else -> it.state.name
-                        } + "\n"
-                    }.replace(", ", "")
+                        }
+                    }
 
                 event.clipboardManager.setText(AnnotatedString(textToCopy))
+            }
+            HomeEvent.ClickPresentAddNewValue -> {
+                _state.update { it.copy(
+                    isPresentedAddNewProtocol = !it.isPresentedAddNewProtocol
+                ) }
             }
         }
     }
@@ -119,7 +132,11 @@ class HomeViewModel(
     private fun getAllProtocols() {
         viewModelScope.launch {
             repository.getAllTodayProtocols().collect { protocols ->
-                _state.update { it.copy(protocolsList = protocols) }
+                _state.update { it.copy(protocolsList = protocols.map {
+                    it.copy(
+                        cadForToday = it.state == CAD && it.date?.isTodayValue(_todayDateDay) ?: false
+                    )
+                }) }
             }
         }
     }

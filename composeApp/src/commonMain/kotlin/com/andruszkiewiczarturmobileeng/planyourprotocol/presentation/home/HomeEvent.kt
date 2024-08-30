@@ -16,6 +16,7 @@ sealed class HomeEvent {
     data class SetDateOfProtocol(val date: Long?): HomeEvent()
     data class SetReasonOfProtocol(val reason: String): HomeEvent()
     data class ClickCopyData(val clipboardManager: ClipboardManager): HomeEvent()
+    data object ClickPresentAddNewValue: HomeEvent()
 
     //Protocol Manager
     data class ChooseProtocol(val protocol: ProtocolModule): HomeEvent()

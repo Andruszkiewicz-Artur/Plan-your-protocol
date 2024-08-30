@@ -11,7 +11,8 @@ data class ProtocolModule(
     var date: Long? = null,
     var resone: String? = null,
     var editingDate: Long? = null,
-    var isSelected: Boolean = false
+    var isSelected: Boolean = false,
+    var cadForToday: Boolean = false
 ) {
     fun toEntity() = ProtocolEntity(
             idDocument = idDocument,

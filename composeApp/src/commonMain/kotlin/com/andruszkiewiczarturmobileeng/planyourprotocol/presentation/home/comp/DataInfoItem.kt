@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Remove
@@ -24,7 +25,7 @@ import com.andruszkiewiczarturmobileeng.planyourprotocol.unit.convertToTime
 
 @Composable
 fun DataInfoItem(
-    dataInfo: ProtocolModule,
+    protocol: ProtocolModule,
     onClickSelect: (Boolean) -> Unit,
     onClickEdit: () -> Unit,
     onClickDelete: () -> Unit
@@ -42,19 +43,19 @@ fun DataInfoItem(
                 .fillMaxWidth(0.7f)
         ) {
             Checkbox(
-                checked = dataInfo.isSelected,
+                checked = protocol.isSelected,
                 onCheckedChange = {
                     onClickSelect(it)
                 }
             )
 
             Text(
-                text = "${dataInfo.idDocument} - " + when(dataInfo.state) {
-                    ProtocolRealizationType.Today -> dataInfo.time?.convertToTime()
-                    ProtocolRealizationType.CAD -> "CAD ${dataInfo.date?.convertMillisToDate()} - ${dataInfo.resone}"
-                    ProtocolRealizationType.PNA -> dataInfo.state.name
-                    ProtocolRealizationType.CNA -> dataInfo.state.name
+                text = "${protocol.idDocument} - " + when(protocol.state) {
+                    ProtocolRealizationType.Today -> protocol.time?.convertToTime()
+                    ProtocolRealizationType.CAD -> "CAD ${protocol.date?.convertMillisToDate()} - ${protocol.resone}"
+                    else -> protocol.state.name
                 },
+                color = if (protocol.cadForToday) MaterialTheme.colors.error else MaterialTheme.colors.onBackground,
                 modifier = Modifier
                     .padding(vertical = 4.dp)
             )

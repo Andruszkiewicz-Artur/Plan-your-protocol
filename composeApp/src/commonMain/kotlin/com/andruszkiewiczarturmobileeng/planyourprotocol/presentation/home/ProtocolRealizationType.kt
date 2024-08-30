@@ -4,5 +4,6 @@ enum class ProtocolRealizationType {
     Today,
     CAD,
     PNA,
-    CNA
+    CNA,
+    Canceled
 }
