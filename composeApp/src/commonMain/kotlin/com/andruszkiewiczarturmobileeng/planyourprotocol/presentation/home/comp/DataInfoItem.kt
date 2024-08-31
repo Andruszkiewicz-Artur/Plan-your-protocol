@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Remove
@@ -55,7 +55,7 @@ fun DataInfoItem(
                     ProtocolRealizationType.CAD -> "CAD ${protocol.date?.convertMillisToDate()} - ${protocol.resone}"
                     else -> protocol.state.name
                 },
-                color = if (protocol.cadForToday) MaterialTheme.colors.error else MaterialTheme.colors.onBackground,
+                color = if (protocol.cadForToday) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier
                     .padding(vertical = 4.dp)
             )

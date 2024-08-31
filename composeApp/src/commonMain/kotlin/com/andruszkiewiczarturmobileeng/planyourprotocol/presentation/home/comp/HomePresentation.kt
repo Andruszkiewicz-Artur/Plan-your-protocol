@@ -56,39 +56,35 @@ fun HomePresentation(
                 },
                 actions = {
                     AnimatedContent(state.isPresentedAddNewProtocol) { isPresented ->
-                        when(isPresented) {
-                            true -> {
-                                IconButton(
-                                    onClick = { vm.onEvent(HomeEvent.ClickPresentAddNewValue) }
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Filled.ArrowUpward,
-                                        contentDescription = null
-                                    )
-                                }
+                        if(isPresented) {
+                            IconButton(
+                                onClick = { vm.onEvent(HomeEvent.ClickPresentAddNewValue) }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.ArrowUpward,
+                                    contentDescription = null
+                                )
                             }
-                            false -> {
-                                IconButton(
-                                    onClick = { vm.onEvent(HomeEvent.ClickPresentAddNewValue) }
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Filled.ArrowDownward,
-                                        contentDescription = null
-                                    )
-                                }
+                        } else {
+                            IconButton(
+                                onClick = { vm.onEvent(HomeEvent.ClickPresentAddNewValue) }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.ArrowDownward,
+                                    contentDescription = null
+                                )
                             }
                         }
                     }
                 }
             )
-        },
-        modifier = Modifier
-            .padding(horizontal = 8.dp)
+        }
     ) { padding ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
+                .padding(horizontal = 8.dp)
         ) {
             item {
                 AnimatedVisibility(state.isPresentedAddNewProtocol) {
