@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class ProtocolRepositoryImpl(private val db: ProtocolDatabase): ProtocolRepository {
-    override fun getAllTodayProtocols(): Flow<List<ProtocolModule>> = db.protocolDao().getAllTodayProtocols().map { it.map { it.toDomain() } }
+    override fun getAllTodayProtocols(startDay: Long, endDay: Long): Flow<List<ProtocolModule>> = db.protocolDao().getAllTodayProtocols(startDay, endDay).map { it.map { it.toDomain() } }
 
     override fun getCountOfAllProtocolsInThisMonth(): Flow<Int> = db.protocolDao().getCountOfAllProtocolsInThisMonth()
 

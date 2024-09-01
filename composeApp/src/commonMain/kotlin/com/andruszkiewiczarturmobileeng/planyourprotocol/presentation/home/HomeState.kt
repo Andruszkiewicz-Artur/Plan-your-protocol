@@ -1,6 +1,7 @@
 package com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home
 
 import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.model.ProtocolModule
+import kotlinx.datetime.Clock
 
 data class HomeState(
     val currentProtocol: ProtocolModule = ProtocolModule(),
@@ -8,8 +9,10 @@ data class HomeState(
     val isPresentedReasons: Boolean = false,
     val isPresentedTimer: Boolean = false,
     val isPresentedCalendar: Boolean = false,
+    val typeOfPresentingCalendar: CalendarOption? = null,
     val isEditing: Boolean = false,
     val protocolsInThisMonth: Int = 0,
     val isAllSelected: Boolean = false,
-    val isPresentedAddNewProtocol: Boolean = true
+    val isPresentedAddNewProtocol: Boolean = true,
+    var currentDatePresenting: Long = Clock.System.now().toEpochMilliseconds()
 )

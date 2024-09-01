@@ -11,19 +11,11 @@ import kotlinx.coroutines.flow.Flow
 interface ProtocolDao {
     @Query("""
         SELECT * FROM Protocols
-        WHERE
-            (
-                (editingDate BETWEEN (strftime('%s', 'now', 'start of day') * 1000)
-                AND (strftime('%s', 'now', 'start of day', '+1 day', '-1 second') * 1000))
-                OR
-                (date BETWEEN (strftime('%s', 'now', 'start of day') * 1000)
-                AND (strftime('%s', 'now', 'start of day', '+1 day', '-1 second') * 1000))
-            )
-            OR
-            (state = 'PNA' OR state = 'CNA')
+        WHERE ((editingDate BETWEEN :startDay AND :endDay) OR (date BETWEEN :startDay AND :endDay))
+        OR (state = 'PNA' OR state = 'CNA')
         ORDER BY editingDate DESC, date DESC
     """)
-    fun getAllTodayProtocols(): Flow<List<ProtocolEntity>>
+    fun getAllTodayProtocols(startDay: Long, endDay: Long): Flow<List<ProtocolEntity>>
 
     @Query("""
         SELECT COUNT(*) FROM Protocols

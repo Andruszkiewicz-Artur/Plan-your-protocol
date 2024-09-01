@@ -4,3 +4,8 @@ enum class TimerType {
     Picker,
     Input
 }
+
+enum class CalendarOption {
+    PresentingCurrentListDate,
+    CadDate
+}

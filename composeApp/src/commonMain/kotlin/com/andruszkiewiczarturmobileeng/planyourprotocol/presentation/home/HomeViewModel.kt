@@ -5,18 +5,26 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.model.ProtocolModule
 import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.repository.ProtocolRepository
+import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.CalendarOption.CadDate
+import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.CalendarOption.PresentingCurrentListDate
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.ProtocolRealizationType.CAD
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.ProtocolRealizationType.Canceled
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.ProtocolRealizationType.Today
 import com.andruszkiewiczarturmobileeng.planyourprotocol.unit.convertMillisToDate
 import com.andruszkiewiczarturmobileeng.planyourprotocol.unit.convertToTime
+import com.andruszkiewiczarturmobileeng.planyourprotocol.unit.getStartAndEndOfDay
 import com.andruszkiewiczarturmobileeng.planyourprotocol.unit.isTodayValue
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.minus
+import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
 
 class HomeViewModel(
@@ -27,6 +35,7 @@ class HomeViewModel(
     val state: StateFlow<HomeState> get() = _state
 
     private val _todayDateDay = Clock.System.now().toLocalDateTime(TimeZone.UTC).dayOfMonth
+    private var _currentProtocolsFlowJob: Job? = null
 
     init {
         getAllProtocols()
@@ -35,7 +44,12 @@ class HomeViewModel(
 
     fun onEvent(event: HomeEvent) {
         when (event) {
-            is HomeEvent.ChangeStatusOfPopUpOfCalendar -> _state.update { it.copy(isPresentedCalendar = event.isPresented) }
+            is HomeEvent.ChangeStatusOfPopUpOfCalendar -> {
+                _state.update { it.copy(
+                    isPresentedCalendar = event.isPresented,
+                    typeOfPresentingCalendar = event.option
+                ) }
+            }
             is HomeEvent.ChangeStatusOfPopUpOfReason -> _state.update { it.copy(isPresentedReasons = event.isPresented) }
             is HomeEvent.ChangeStatusOfPopUpOfTimer -> _state.update { it.copy(isPresentedTimer = event.isPresented) }
             is HomeEvent.ChooseProtocol -> _state.update { it.copy(currentProtocol = event.protocol) }
@@ -44,7 +58,15 @@ class HomeViewModel(
                     repository.deleteProtocol(event.protocol)
                 }
             }
-            is HomeEvent.SetDateOfProtocol -> _state.update { it.copy(currentProtocol = it.currentProtocol.copy(date = event.date)) }
+            is HomeEvent.SetDate -> {
+                if (event.date != null) {
+                    when (_state.value.typeOfPresentingCalendar) {
+                        PresentingCurrentListDate -> _state.update { it.copy(currentDatePresenting = event.date) }
+                        CadDate -> _state.update { it.copy(currentProtocol = it.currentProtocol.copy(date = event.date)) }
+                        null -> {  }
+                    }
+                }
+            }
             is HomeEvent.SetIdOfProtocol -> _state.update {
                 it.copy(
                     currentProtocol = it.currentProtocol.copy(idDocument = event.idProtocol),
@@ -126,12 +148,26 @@ class HomeViewModel(
                     isPresentedAddNewProtocol = !it.isPresentedAddNewProtocol
                 ) }
             }
+            is HomeEvent.ChangeDateListOfProtocols -> {
+                _state.update { it.copy(
+                    currentDatePresenting = if (event.isPrevious) {
+                        Instant.fromEpochMilliseconds(it.currentDatePresenting).minus(24, DateTimeUnit.HOUR).toEpochMilliseconds()
+                    } else {
+                        Instant.fromEpochMilliseconds(it.currentDatePresenting).plus(24, DateTimeUnit.HOUR).toEpochMilliseconds()
+                    }
+                ) }
+
+                getAllProtocols()
+            }
         }
     }
 
     private fun getAllProtocols() {
-        viewModelScope.launch {
-            repository.getAllTodayProtocols().collect { protocols ->
+        _currentProtocolsFlowJob?.cancel()
+        val startAndEndOfTheDay = _state.value.currentDatePresenting.getStartAndEndOfDay()
+
+        _currentProtocolsFlowJob = viewModelScope.launch {
+            repository.getAllTodayProtocols(startDay = startAndEndOfTheDay.first, endDay = startAndEndOfTheDay.second).collect { protocols ->
                 _state.update { it.copy(protocolsList = protocols.map {
                     it.copy(
                         cadForToday = it.state == CAD && it.date?.isTodayValue(_todayDateDay) ?: false

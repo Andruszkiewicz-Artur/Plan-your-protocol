@@ -16,6 +16,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.ChevronLeft
+import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,10 +34,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
+import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.CalendarOption
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.HomeEvent
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.HomeViewModel
+import com.andruszkiewiczarturmobileeng.planyourprotocol.unit.convertLongToStringDate
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
 
@@ -92,7 +96,7 @@ fun HomePresentation(
                         dataInfo = state.currentProtocol,
                         onClickShowPopUpOfReason = { vm.onEvent(HomeEvent.ChangeStatusOfPopUpOfReason(it)) },
                         onClickShowPopUpOfTimer = { vm.onEvent(HomeEvent.ChangeStatusOfPopUpOfTimer(it)) },
-                        onClickShowPopUpOfDate = { vm.onEvent(HomeEvent.ChangeStatusOfPopUpOfCalendar(it))  },
+                        onClickShowPopUpOfDate = { vm.onEvent(HomeEvent.ChangeStatusOfPopUpOfCalendar(it, CalendarOption.CadDate))  },
                         onClickAdd = { vm.onEvent(HomeEvent.SetProtocol) },
                         onChangeValueIdDocument = { vm.onEvent(HomeEvent.SetIdOfProtocol(it)) },
                         onClickDateOfRealization = { vm.onEvent(HomeEvent.SetTypeOfPlaningProtocol(it)) },
@@ -108,11 +112,51 @@ fun HomePresentation(
                         .padding(horizontal = 16.dp)
                         .padding(top = 16.dp)
                 ) {
-                    Text(
-                        text = "Today's Protocols",
-                        style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier
-                    )
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = "Protocols date",
+                            style = MaterialTheme.typography.titleLarge
+                        )
+
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            IconButton(
+                                onClick = { vm.onEvent(HomeEvent.ChangeDateListOfProtocols(true)) }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.ChevronLeft,
+                                    contentDescription = null
+                                )
+                            }
+
+                            Text(
+                                text = state.currentDatePresenting.convertLongToStringDate(),
+                                style = MaterialTheme.typography.titleMedium
+                            )
+
+                            IconButton(
+                                onClick = { vm.onEvent(HomeEvent.ChangeStatusOfPopUpOfCalendar(true, CalendarOption.PresentingCurrentListDate)) }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.CalendarMonth,
+                                    contentDescription = null
+                                )
+                            }
+
+                            IconButton(
+                                onClick = { vm.onEvent(HomeEvent.ChangeDateListOfProtocols(false)) }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.ChevronRight,
+                                    contentDescription = null
+                                )
+                            }
+                        }
+                    }
 
                     Spacer(Modifier.width(16.dp))
 
@@ -228,10 +272,10 @@ fun HomePresentation(
 
     AnimatedVisibility(state.isPresentedCalendar) {
         PopUpOfCalendar(
-            onDismiss = { vm.onEvent(HomeEvent.ChangeStatusOfPopUpOfCalendar(false)) },
+            onDismiss = { vm.onEvent(HomeEvent.ChangeStatusOfPopUpOfCalendar(false, null)) },
             onSave = {
-                vm.onEvent(HomeEvent.SetDateOfProtocol(it))
-                vm.onEvent(HomeEvent.ChangeStatusOfPopUpOfCalendar(false))
+                vm.onEvent(HomeEvent.SetDate(it))
+                vm.onEvent(HomeEvent.ChangeStatusOfPopUpOfCalendar(false, null))
             }
         )
     }
