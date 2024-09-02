@@ -58,7 +58,6 @@ fun AddingNewValueView(
             ),
             keyboardOptions = KeyboardOptions.Default.copy(
                 capitalization = KeyboardCapitalization.None,
-                autoCorrect = false,
                 imeAction = ImeAction.Done
             ),
         )

@@ -3,6 +3,9 @@ package com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home
 import androidx.compose.ui.text.AnnotatedString
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.andruszkiewiczarturmobileeng.planyourprotocol.controller.snackbar.SnackbarAction
+import com.andruszkiewiczarturmobileeng.planyourprotocol.controller.snackbar.SnackbarController
+import com.andruszkiewiczarturmobileeng.planyourprotocol.controller.snackbar.SnackbarEvent
 import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.model.ProtocolModule
 import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.repository.ProtocolRepository
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.CalendarOption.CadDate
@@ -56,6 +59,18 @@ class HomeViewModel(
             is HomeEvent.DeleteProtocol -> {
                 viewModelScope.launch {
                     repository.deleteProtocol(event.protocol)
+
+                    SnackbarController.sendEvent(
+                        event = SnackbarEvent(
+                            message = "Delete Protocol!",
+                            action = SnackbarAction(
+                                name = "Undo",
+                                action = {
+                                    onEvent(HomeEvent.SetProtocol(event.protocol))
+                                }
+                            )
+                        )
+                    )
                 }
             }
             is HomeEvent.SetDate -> {
@@ -63,7 +78,7 @@ class HomeViewModel(
                     when (_state.value.typeOfPresentingCalendar) {
                         PresentingCurrentListDate -> _state.update { it.copy(currentDatePresenting = event.date) }
                         CadDate -> _state.update { it.copy(currentProtocol = it.currentProtocol.copy(date = event.date)) }
-                        null -> {  }
+                        null -> { /*In others situation don`t update data*/ }
                     }
                 }
             }
@@ -73,8 +88,8 @@ class HomeViewModel(
                     isEditing = it.protocolsList.any { it.idDocument == event.idProtocol}
                 )
             }
-            HomeEvent.SetProtocol -> {
-                var currentProtocol = _state.value.currentProtocol
+            is HomeEvent.SetProtocol -> {
+                var currentProtocol = event.protocol ?: _state.value.currentProtocol
                 var shouldProceed = false
 
                 viewModelScope.launch {
@@ -105,6 +120,13 @@ class HomeViewModel(
                     if (shouldProceed) {
                         repository.upsertProtocol(currentProtocol)
                         _state.update { it.copy(currentProtocol = ProtocolModule()) }
+
+                        SnackbarController.sendEvent(
+                            event = SnackbarEvent(
+                                message = "Add/Update protocol!",
+                                action = null
+                            )
+                        )
                     }
                 }
             }
@@ -141,7 +163,25 @@ class HomeViewModel(
                         }
                     }
 
-                event.clipboardManager.setText(AnnotatedString(textToCopy))
+                viewModelScope.launch {
+                    if (textToCopy.isNotBlank()) {
+                        event.clipboardManager.setText(AnnotatedString(textToCopy))
+
+                        SnackbarController.sendEvent(
+                            event = SnackbarEvent(
+                                message = "Copy protocols!",
+                                action = null
+                            )
+                        )
+                    } else {
+                        SnackbarController.sendEvent(
+                            event = SnackbarEvent(
+                                message = "You need select what do you want to copy!",
+                                action = null
+                            )
+                        )
+                    }
+                }
             }
             HomeEvent.ClickPresentAddNewValue -> {
                 _state.update { it.copy(

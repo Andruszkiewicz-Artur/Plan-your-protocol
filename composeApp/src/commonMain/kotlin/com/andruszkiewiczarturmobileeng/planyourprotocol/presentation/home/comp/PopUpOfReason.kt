@@ -2,7 +2,6 @@ package com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.comp
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.AlertDialog
 import androidx.compose.material.IconButton
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
@@ -33,6 +31,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.andruszkiewiczarturmobileeng.planyourprotocol.core.compose.AlertDialogDefault
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -51,12 +50,86 @@ fun PopUpOfReasonDialog(
     )
     var ownReason by remember { mutableStateOf("") }
 
-    AlertDialog(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
+    AlertDialogDefault(
         onDismissRequest = onDismiss,
-        buttons = {
+        content = {
+            Text(
+                text = "Choose your resone",
+                style = MaterialTheme.typography.titleLarge,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+
+            FlowRow (
+                modifier = Modifier
+                    .padding(12.dp)
+                    .fillMaxWidth()
+            ) {
+                listOfReasons.forEach { reason ->
+                    AnimatedContent(
+                        targetState = chosenReason,
+                        modifier = Modifier
+                            .padding(4.dp)
+                    ) {
+                        if (chosenReason != reason) {
+                            OutlinedButton(
+                                onClick = {
+                                    chosenReason = reason
+                                }
+                            ) {
+                                Text(
+                                    text = reason
+                                )
+                            }
+                        } else {
+                            Button(
+                                onClick = {
+                                    chosenReason = reason
+                                }
+                            ) {
+                                Text(
+                                    text = reason
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            OutlinedTextField(
+                label = {
+                    Text(text = "Inny powód...")
+                },
+                value = ownReason,
+                onValueChange = { ownReason = it },
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        keyboardController?.hide()
+                    }
+                ),
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Done
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        horizontal = 16.dp
+                    ),
+                trailingIcon = {
+                    IconButton(
+                        onClick = {
+                            onSave(ownReason)
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Save,
+                            contentDescription = null
+                        )
+                    }
+                }
+            )
+
             Row(
                 horizontalArrangement = Arrangement.End,
                 modifier = Modifier
@@ -75,87 +148,6 @@ fun PopUpOfReasonDialog(
                 ) {
                     Text(text = "Save")
                 }
-            }
-        },
-        title = {
-            Text(
-                text = "Choose your resone",
-                style = MaterialTheme.typography.titleLarge,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-            )
-        },
-        text = {
-            Column{
-                FlowRow (
-                    modifier = Modifier
-                        .padding(12.dp)
-                        .fillMaxWidth()
-                ) {
-                    listOfReasons.forEach { reason ->
-                        AnimatedContent(
-                            targetState = chosenReason,
-                            modifier = Modifier
-                                .padding(4.dp)
-                        ) {
-                            if (chosenReason != reason) {
-                                OutlinedButton(
-                                    onClick = {
-                                        chosenReason = reason
-                                    }
-                                ) {
-                                    Text(
-                                        text = reason
-                                    )
-                                }
-                            } else {
-                                Button(
-                                    onClick = {
-                                        chosenReason = reason
-                                    }
-                                ) {
-                                    Text(
-                                        text = reason
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-
-                OutlinedTextField(
-                    label = {
-                        Text(text = "Inny powód...")
-                    },
-                    value = ownReason,
-                    onValueChange = { ownReason = it },
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            keyboardController?.hide()
-                        }
-                    ),
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        imeAction = ImeAction.Done
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            horizontal = 16.dp
-                        ),
-                    trailingIcon = {
-                        IconButton(
-                            onClick = {
-                                onSave(ownReason)
-                            }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Outlined.Save,
-                                contentDescription = null
-                            )
-                        }
-                    }
-                )
             }
         }
     )
