@@ -8,22 +8,41 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.stringPreferencesKey
 import com.andruszkiewiczarturmobileeng.planyourprotocol.controller.snackbar.SnackbarController
+import com.andruszkiewiczarturmobileeng.planyourprotocol.core.Static
 import com.andruszkiewiczarturmobileeng.planyourprotocol.core.compose.KeyboardAware
+import com.andruszkiewiczarturmobileeng.planyourprotocol.core.compose.ObserveAsEvents
+import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.ThemType
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.comp.HomePresentation
 import com.example.compose.darkColorScheme
 import com.example.compose.lightColorScheme
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 @Preview
-fun App() {
+fun App(
+    prefs: DataStore<Preferences>
+) {
+    val them by prefs.data.map { dataStore ->
+        val themKey = stringPreferencesKey(Static.THEM_PREFS)
+        ThemType.valueOf(dataStore[themKey] ?: "System")
+    }.collectAsState(ThemType.System)
 
     MaterialTheme(
-        colorScheme = if(isSystemInDarkTheme()) darkColorScheme else lightColorScheme
+        colorScheme = when(them) {
+            ThemType.System -> if(isSystemInDarkTheme()) darkColorScheme else lightColorScheme
+            ThemType.Light -> lightColorScheme
+            ThemType.Dark -> darkColorScheme
+        }
     ) {
         val snackbarHostState = remember { SnackbarHostState() }
         val scope = rememberCoroutineScope()
@@ -52,7 +71,7 @@ fun App() {
                     )
                 }
             ) {
-                HomePresentation()
+                HomePresentation(prefs)
             }
         }
     }

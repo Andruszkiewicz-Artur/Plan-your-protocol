@@ -9,3 +9,9 @@ enum class CalendarOption {
     PresentingCurrentListDate,
     CadDate
 }
+
+enum class ThemType {
+    System,
+    Light,
+    Dark
+}

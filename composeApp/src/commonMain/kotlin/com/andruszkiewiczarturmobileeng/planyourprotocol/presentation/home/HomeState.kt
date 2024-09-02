@@ -9,6 +9,7 @@ data class HomeState(
     val isPresentedReasons: Boolean = false,
     val isPresentedTimer: Boolean = false,
     val isPresentedCalendar: Boolean = false,
+    val isPresentedSettings: Boolean = false,
     val typeOfPresentingCalendar: CalendarOption? = null,
     val isEditing: Boolean = false,
     val protocolsInThisMonth: Int = 0,

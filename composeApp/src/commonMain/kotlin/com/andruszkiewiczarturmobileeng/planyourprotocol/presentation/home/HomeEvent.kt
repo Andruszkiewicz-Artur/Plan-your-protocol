@@ -8,6 +8,7 @@ sealed class HomeEvent {
     data class ChangeStatusOfPopUpOfReason(val isPresented: Boolean): HomeEvent()
     data class ChangeStatusOfPopUpOfTimer(val isPresented:Boolean): HomeEvent()
     data class ChangeStatusOfPopUpOfCalendar(val isPresented: Boolean, val option: CalendarOption?): HomeEvent()
+    data class ChangeStatusOfPopUpOfSettings(val isPresented: Boolean): HomeEvent()
 
     //Set up data protocol
     data class SetIdOfProtocol(val idProtocol: String):HomeEvent()

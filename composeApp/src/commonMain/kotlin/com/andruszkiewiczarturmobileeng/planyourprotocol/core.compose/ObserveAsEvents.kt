@@ -1,4 +1,4 @@
-package com.andruszkiewiczarturmobileeng.planyourprotocol
+package com.andruszkiewiczarturmobileeng.planyourprotocol.core.compose
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect

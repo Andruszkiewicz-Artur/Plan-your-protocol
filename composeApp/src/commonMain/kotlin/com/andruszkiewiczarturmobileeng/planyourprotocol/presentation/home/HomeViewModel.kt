@@ -199,6 +199,11 @@ class HomeViewModel(
 
                 getAllProtocols()
             }
+            is HomeEvent.ChangeStatusOfPopUpOfSettings -> {
+                _state.update { it.copy(
+                    isPresentedSettings = event.isPresented
+                ) }
+            }
         }
     }
 

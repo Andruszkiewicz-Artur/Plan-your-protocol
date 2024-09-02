@@ -80,6 +80,9 @@ kotlin {
             api(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.composeVM)
+
+            api(libs.datastore.preferences)
+            api(libs.datastore)
         }
     }
 }

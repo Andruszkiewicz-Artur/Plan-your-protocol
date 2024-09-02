@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -32,32 +33,37 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.unit.dp
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
+import com.andruszkiewiczarturmobileeng.planyourprotocol.core.Static
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.CalendarOption
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.HomeEvent
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.HomeViewModel
 import com.andruszkiewiczarturmobileeng.planyourprotocol.unit.convertLongToStringDate
+import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
 
 @OptIn(ExperimentalMaterial3Api::class, KoinExperimentalAPI::class)
 @Composable
 fun HomePresentation(
+    prefs: DataStore<Preferences>,
     vm: HomeViewModel = koinViewModel()
 ) {
     val state = vm.state.collectAsState().value
     val clipboardManager = LocalClipboardManager.current
     val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
-    LaunchedEffect(Unit) {
-
-    }
 
     Scaffold(
         snackbarHost = {
@@ -71,6 +77,14 @@ fun HomePresentation(
                     )
                 },
                 actions = {
+                    IconButton(
+                        onClick = { vm.onEvent(HomeEvent.ChangeStatusOfPopUpOfSettings(true)) }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Settings,
+                            contentDescription = null
+                        )
+                    }
                     AnimatedContent(state.isPresentedAddNewProtocol) { isPresented ->
                         if(isPresented) {
                             IconButton(
@@ -288,6 +302,20 @@ fun HomePresentation(
             onSave = {
                 vm.onEvent(HomeEvent.SetDate(it))
                 vm.onEvent(HomeEvent.ChangeStatusOfPopUpOfCalendar(false, null))
+            }
+        )
+    }
+
+    AnimatedVisibility(state.isPresentedSettings) {
+        PopUpOfSettings(
+            onDismiss = { vm.onEvent(HomeEvent.ChangeStatusOfPopUpOfSettings(false)) },
+            onClickButton = { themType ->
+                scope.launch {
+                    prefs.edit { dataStore ->
+                        val themKey = stringPreferencesKey(Static.THEM_PREFS)
+                        dataStore[themKey] = themType.name
+                    }
+                }
             }
         )
     }

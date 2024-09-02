@@ -24,6 +24,8 @@ sqlite = "2.5.0-SNAPSHOT"
 koin = "3.6.0-Beta4"
 koin-compose = "1.2.0-Beta4"
 
+datastore = "1.1.1"
+
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
@@ -52,6 +54,10 @@ koin-composeVM = { module = "io.insert-koin:koin-compose-viewmodel", version.ref
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "roomCommon" }
 room-runtime-android = { group = "androidx.room", name = "room-runtime-android", version.ref = "roomCommon" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomCommon" }
+
+#DataStore preferences
+datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
+datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
