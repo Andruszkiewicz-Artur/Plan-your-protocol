@@ -1,4 +1,4 @@
-package com.andruszkiewiczarturmobileeng.planyourprotocol.controller.snackbar
+package com.andruszkiewiczarturmobileeng.planyourprotocol.controller
 
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow

@@ -3,9 +3,9 @@ package com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home
 import androidx.compose.ui.text.AnnotatedString
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.andruszkiewiczarturmobileeng.planyourprotocol.controller.snackbar.SnackbarAction
-import com.andruszkiewiczarturmobileeng.planyourprotocol.controller.snackbar.SnackbarController
-import com.andruszkiewiczarturmobileeng.planyourprotocol.controller.snackbar.SnackbarEvent
+import com.andruszkiewiczarturmobileeng.planyourprotocol.controller.SnackbarAction
+import com.andruszkiewiczarturmobileeng.planyourprotocol.controller.SnackbarController
+import com.andruszkiewiczarturmobileeng.planyourprotocol.controller.SnackbarEvent
 import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.model.ProtocolModule
 import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.repository.ProtocolRepository
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.CalendarOption.CadDate

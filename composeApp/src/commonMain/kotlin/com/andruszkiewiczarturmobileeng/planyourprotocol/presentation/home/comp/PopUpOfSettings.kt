@@ -8,9 +8,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Contrast
-import androidx.compose.material.icons.filled.DarkMode
-import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material.icons.outlined.Contrast
+import androidx.compose.material.icons.outlined.DarkMode
+import androidx.compose.material.icons.outlined.LightMode
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -53,7 +53,7 @@ fun PopUpOfSettings(
                     .fillMaxWidth()
             ) {
                 ThemeItem(
-                    imageVector = Icons.Filled.LightMode,
+                    imageVector = Icons.Outlined.LightMode,
                     value = ThemType.Light.name,
                     onClick = { scope.launch {
                         onClickButton(ThemType.Light)
@@ -61,7 +61,7 @@ fun PopUpOfSettings(
                 )
 
                 ThemeItem(
-                    imageVector = Icons.Filled.Contrast,
+                    imageVector = Icons.Outlined.Contrast,
                     value = ThemType.System.name,
                     onClick = { scope.launch {
                         onClickButton(ThemType.System)
@@ -69,7 +69,7 @@ fun PopUpOfSettings(
                 )
 
                 ThemeItem(
-                    imageVector = Icons.Filled.DarkMode,
+                    imageVector = Icons.Outlined.DarkMode,
                     value = ThemType.Dark.name,
                     onClick = { scope.launch {
                         onClickButton(ThemType.Dark)
@@ -94,37 +94,4 @@ fun PopUpOfSettings(
             }
         }
     )
-}
-
-@Composable
-fun ThemeItem(
-    imageVector: ImageVector,
-    value: String,
-    onClick: () -> Unit
-) {
-    TextButton(
-        onClick = {
-            onClick()
-        }
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Icon(
-                imageVector = imageVector,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier
-                    .size(70.dp)
-            )
-
-            Spacer(Modifier.height(4.dp))
-
-            Text(
-                text = value,
-                color = MaterialTheme.colorScheme.onBackground,
-                fontSize = 20.sp
-            )
-        }
-    }
 }

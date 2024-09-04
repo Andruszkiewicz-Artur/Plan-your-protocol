@@ -83,6 +83,8 @@ kotlin {
 
             api(libs.datastore.preferences)
             api(libs.datastore)
+
+            implementation(libs.navigation.compose)
         }
     }
 }

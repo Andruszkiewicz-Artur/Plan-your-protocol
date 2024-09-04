@@ -15,10 +15,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.andruszkiewiczarturmobileeng.planyourprotocol.controller.snackbar.SnackbarController
+import androidx.navigation.compose.rememberNavController
+import com.andruszkiewiczarturmobileeng.planyourprotocol.controller.SnackbarController
 import com.andruszkiewiczarturmobileeng.planyourprotocol.core.Static
 import com.andruszkiewiczarturmobileeng.planyourprotocol.core.compose.KeyboardAware
 import com.andruszkiewiczarturmobileeng.planyourprotocol.core.compose.ObserveAsEvents
+import com.andruszkiewiczarturmobileeng.planyourprotocol.navigation.NavGraph
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.ThemType
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.comp.HomePresentation
 import com.example.compose.darkColorScheme
@@ -46,6 +48,7 @@ fun App(
     ) {
         val snackbarHostState = remember { SnackbarHostState() }
         val scope = rememberCoroutineScope()
+        val navController = rememberNavController()
 
         ObserveAsEvents(flow = SnackbarController.events, snackbarHostState) { event ->
             scope.launch {
@@ -71,7 +74,10 @@ fun App(
                     )
                 }
             ) {
-                HomePresentation(prefs)
+                NavGraph(
+                    navController = navController,
+                    prefs = prefs
+                )
             }
         }
     }
