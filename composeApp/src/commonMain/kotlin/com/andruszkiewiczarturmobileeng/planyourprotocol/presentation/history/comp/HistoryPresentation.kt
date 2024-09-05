@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -23,6 +24,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.history.HistoryEvent
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.history.HistoryViewModel
 import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.unit.enums.PresentedTypeDate
@@ -31,7 +33,8 @@ import org.koin.compose.viewmodel.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HistoryPresentation(
-    vm: HistoryViewModel = koinViewModel()
+    vm: HistoryViewModel = koinViewModel(),
+    navHostController: NavHostController
 ) {
     val state = vm.state.collectAsState().value
 
@@ -39,6 +42,16 @@ fun HistoryPresentation(
         topBar = {
             Column {
                 CenterAlignedTopAppBar(
+                    navigationIcon = {
+                        IconButton(
+                            onClick = { navHostController.popBackStack() }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.ArrowBackIosNew,
+                                contentDescription = null
+                            )
+                        }
+                    },
                     title = {
                         Text(text = "History")
                     },

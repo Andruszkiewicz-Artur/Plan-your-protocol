@@ -58,7 +58,9 @@ fun NavGraph(
         composable(
             route = Screen.History.route
         ) {
-            HistoryPresentation()
+            HistoryPresentation(
+                navHostController = navController
+            )
         }
     }
 }
