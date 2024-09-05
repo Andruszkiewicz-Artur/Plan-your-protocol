@@ -31,20 +31,11 @@ interface ProtocolDao {
         SELECT strftime(:type, editingDate / 1000, 'unixepoch') AS date, COUNT(*) AS count
         FROM Protocols
         WHERE time IS NOT NULL
+        AND editingDate BETWEEN :min AND :last
         GROUP BY strftime(:type, editingDate / 1000, 'unixepoch')
-        ORDER BY strftime(:type, editingDate / 1000, 'unixepoch')
+        ORDER BY strftime(:type, editingDate / 1000, 'unixepoch') DESC
     """)
-    fun getProtocolCountByDay(type: String): Flow<List<ProtocolCountByDayModel>>
-
-    @Query("""
-        SELECT strftime('%Y-%m', editingDate / 1000, 'unixepoch') AS date, COUNT(*) AS count
-        FROM Protocols
-        WHERE time IS NOT NULL
-        GROUP BY date
-        ORDER BY date
-        LIMIT 30
-    """)
-    fun getProtocolCountByMonth(): Flow<List<ProtocolCountByDayModel>>
+    fun getProtocolListCount(type: String, min: Long, last: Long): Flow<List<ProtocolCountByDayModel>>
 
     @Upsert
     suspend fun upsertProtocol(protocol: ProtocolEntity)

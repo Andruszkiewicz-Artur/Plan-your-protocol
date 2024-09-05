@@ -18,11 +18,11 @@ fun Long.convertMillisToDate(): String {
     return "${localDateTime.dayOfMonth.padStart()}.${localDateTime.monthNumber.padStart()}"
 }
 
-fun Long.convertMillisToDateWithYear(): String {
+fun Long.convertMillisToDateWithStringMonth(isYear: Boolean = false): String {
     val instant = Instant.fromEpochMilliseconds(this)
     val localDateTime = instant.toLocalDateTime(TimeZone.UTC)
 
-    return "${localDateTime.dayOfMonth.padStart()}.${localDateTime.monthNumber.padStart()}.${localDateTime.year}"
+    return "${localDateTime.dayOfMonth.padStart()} ${localDateTime.month.name}${if (isYear) " " + localDateTime.year else ""}"
 }
 
 fun Long.isTodayValue(todayDateDay: Int): Boolean = Instant.fromEpochMilliseconds(this).toLocalDateTime(TimeZone.UTC).dayOfMonth == todayDateDay

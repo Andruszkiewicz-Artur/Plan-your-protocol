@@ -2,15 +2,18 @@ package com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.history
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.model.RangeOfDataModel
 import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.repository.ProtocolRepository
-import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.ProtocolRealizationType.CAD
-import com.andruszkiewiczarturmobileeng.planyourprotocol.unit.getStartAndEndOfDay
-import com.andruszkiewiczarturmobileeng.planyourprotocol.unit.isTodayValue
+import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.unit.enums.PresentedTypeDate
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.Instant
+import kotlinx.datetime.minus
 
 class HistoryViewModel(
     private val repository: ProtocolRepository
@@ -35,6 +38,24 @@ class HistoryViewModel(
                     getListOfProtocols()
                 }
             }
+            is HistoryEvent.ChangePresentationOfDataPickerRange -> {
+                _state.update { it.copy(
+                    isPresentedDataPickerRange = event.isPresented
+                ) }
+            }
+            is HistoryEvent.SetUpRangeOfDate -> {
+                if (_state.value.rangeOfDataModel != event.range) {
+                    _state.update { it.copy(
+                        rangeOfDataModel = event.range.copy(
+                            last = event.range.last?.plus(86399999)
+                        )
+                    ) }
+
+                    getListOfProtocols()
+                }
+
+                onEvent(HistoryEvent.ChangePresentationOfDataPickerRange(false))
+            }
         }
     }
 
@@ -42,7 +63,10 @@ class HistoryViewModel(
         _currentProtocolsFlowJob?.cancel()
 
         _currentProtocolsFlowJob = viewModelScope.launch {
-            repository.getListOfProtocolCount(_state.value.presentedTypeDate).collect { list ->
+            repository.getListOfProtocolCount(
+                type = _state.value.presentedTypeDate,
+                range = if(_state.value.presentedTypeDate.equals(PresentedTypeDate.Daily)) _state.value.rangeOfDataModel else RangeOfDataModel(null, null)
+            ).collect { list ->
                 _state.update {
                     it.copy(
                         protocolsCountByDayList = list
