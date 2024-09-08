@@ -2,8 +2,16 @@ package com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.addEditPr
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Save
@@ -12,16 +20,21 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.addEditProtocol.AddEditEvent
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.addEditProtocol.AddEditProtocolViewModel
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.addEditProtocol.AddEditUiEvent
+import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.ProtocolRealizationType
+import com.andruszkiewiczarturmobileeng.planyourprotocol.util.convertMillisToDate
+import com.andruszkiewiczarturmobileeng.planyourprotocol.util.convertToTime
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -83,7 +96,9 @@ fun AddEditProtocolPresentation(
                     }
                 }
             )
-        }
+        },
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -97,8 +112,57 @@ fun AddEditProtocolPresentation(
                 onChangeValueIdDocument = { vm.onEvent(AddEditEvent.SetIdOfProtocol(it)) },
                 onClickDateOfRealization = { vm.onEvent(AddEditEvent.SetTypeOfPlaningProtocol(it)) },
                 onClickUpdateView = { vm.onEvent(AddEditEvent.SetUpProtocol(state.protocol.idDocument)) },
+                presentUploadButton = state.updateProtocol.idDocument == state.protocol.idDocument,
                 isEditing = state.isEditingMode
             )
+
+            AnimatedVisibility(state.updateProtocol.idDocument == state.protocol.idDocument) {
+                Column(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp)
+                            .padding(bottom = 8.dp)
+                    ) {
+                        Text(
+                            text = "Protocol history",
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                    }
+
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                    ) {
+                        item {
+                            if (state.listOfHistoricalProtocols.isEmpty()) {
+                                Spacer(modifier = Modifier.height(16.dp))
+
+                                Row(
+                                    horizontalArrangement = Arrangement.Center,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                ) {
+                                    Text(
+                                        text = "Empty history list!",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.3f)
+                                    )
+                                }
+                            }
+                        }
+
+                        items(state.listOfHistoricalProtocols) { protocol ->
+                            HistoricalItem(
+                                protocol = protocol,
+                                isLast = state.listOfHistoricalProtocols.last() == protocol
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
 

@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "31e05a46ff4307019106a4fb7a0a577e",
+    "identityHash": "30d515a1cd481dc8a09c47e3e5e1a7f3",
     "entities": [
       {
         "tableName": "Protocols",
@@ -48,11 +48,61 @@
             "idDocument"
           ]
         }
+      },
+      {
+        "tableName": "HistoricalProtocols",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `idProtocol` TEXT NOT NULL, `state` TEXT NOT NULL, `time` INTEGER, `date` INTEGER, `editingDate` INTEGER NOT NULL, `reason` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "idProtocol",
+            "columnName": "idProtocol",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "state",
+            "columnName": "state",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "time",
+            "columnName": "time",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "date",
+            "columnName": "date",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "editingDate",
+            "columnName": "editingDate",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "reason",
+            "columnName": "reason",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        }
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '31e05a46ff4307019106a4fb7a0a577e')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '30d515a1cd481dc8a09c47e3e5e1a7f3')"
     ]
   }
 }

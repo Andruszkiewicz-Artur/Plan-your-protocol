@@ -16,6 +16,7 @@ fun getDatabaseBuilder(): ProtocolDatabase {
         factory = { ProtocolDatabase::class.instantiateImpl() }
     ).setDriver(BundledSQLiteDriver())
         .setQueryCoroutineContext(Dispatchers.IO)
+        .addMigrations(ProtocolDatabase.migration1To2)
         .build()
 }
 

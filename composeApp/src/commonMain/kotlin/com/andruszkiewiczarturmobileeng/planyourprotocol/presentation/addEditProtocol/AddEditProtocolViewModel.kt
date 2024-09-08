@@ -31,9 +31,12 @@ class AddEditProtocolViewModel(
                     repository.getProtocolById(event.protocolId)?.let { protocol ->
                         _state.update { it.copy(
                             protocol = protocol,
+                            updateProtocol = protocol,
                             isEditingMode = true
                         ) }
                     }
+
+                    getListOfHistoricalProtocols()
                 }
             }
             is AddEditEvent.SetDate -> {
@@ -87,18 +90,38 @@ class AddEditProtocolViewModel(
                     }
 
                     if (shouldProceed) {
-                        repository.upsertProtocol(currentProtocol)
+                        val lastVersionOfProtocol = repository.getProtocolById(_state.value.protocol.idDocument)
+                        var snackBarMessage: String
 
-                        _sharedFlow.emit(AddEditUiEvent.BackToHomeScreen)
+                        if(lastVersionOfProtocol?.idDocument != null) {
+                            repository.upsertHistoryProtocol(lastVersionOfProtocol.toHistoricalProtocolModel())
+                            repository.upsertProtocol(currentProtocol)
+                            snackBarMessage = "Update protocol"
+                        } else {
+                            repository.upsertProtocol(currentProtocol)
+                            snackBarMessage = "Add new protocol"
+                        }
+
                         SnackbarController.sendEvent(
                             event = SnackbarEvent(
-                                message = if (state.value.isEditingMode) "Update protocol" else "Add new protocol",
+                                message = snackBarMessage,
                                 action = null
                             )
                         )
+                        _sharedFlow.emit(AddEditUiEvent.BackToHomeScreen)
                     }
                 }
             }
+        }
+    }
+
+    private suspend fun getListOfHistoricalProtocols() {
+        val allHistoricalProtocols = repository.getAllHistoryProtocolsById(_state.value.protocol.idDocument)
+
+        _state.update {
+            it.copy(
+                listOfHistoricalProtocols = allHistoricalProtocols
+            )
         }
     }
 }

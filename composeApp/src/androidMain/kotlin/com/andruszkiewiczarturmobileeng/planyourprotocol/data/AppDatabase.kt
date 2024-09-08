@@ -10,5 +10,6 @@ fun getDatabaseBuilder(ctx: Context): ProtocolDatabase {
     return Room.databaseBuilder<ProtocolDatabase>(ctx, dbFile.absolutePath)
         .setDriver(BundledSQLiteDriver())
         .setQueryCoroutineContext(Dispatchers.IO)
+        .addMigrations(ProtocolDatabase.migration1To2)
         .build()
 }

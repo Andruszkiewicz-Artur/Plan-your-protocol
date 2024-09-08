@@ -1,5 +1,6 @@
 package com.andruszkiewiczarturmobileeng.planyourprotocol.data
 
+import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.model.HistoricalProtocolModel
 import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.model.ProtocolCountByDayModel
 import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.model.ProtocolModule
 import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.model.RangeOfDataModel
@@ -27,7 +28,7 @@ class ProtocolRepositoryImpl(private val db: ProtocolDatabase): ProtocolReposito
             },
             min = range.min ?: Instant.fromEpochMilliseconds(currentTime).minus(24*3660, DateTimeUnit.HOUR).toEpochMilliseconds(),
             last = range.last ?: currentTime
-        )
+        ).map { it.map { it.toDomain() } }
     }
 
     override suspend fun getProtocolById(idProtocol: String): ProtocolModule? = db.protocolDao().getProtocolById(idProtocol)?.toDomain()
@@ -35,4 +36,8 @@ class ProtocolRepositoryImpl(private val db: ProtocolDatabase): ProtocolReposito
     override suspend fun upsertProtocol(protocol: ProtocolModule) = db.protocolDao().upsertProtocol(protocol.toEntity())
 
     override suspend fun deleteProtocol(protocol: ProtocolModule) = db.protocolDao().deleteProtocol(protocol.toEntity())
+
+    override suspend fun upsertHistoryProtocol(historicalProtocolModel: HistoricalProtocolModel) = db.protocolDao().upsertHistoryProtocol(historicalProtocolModel.toEntity())
+
+    override suspend fun getAllHistoryProtocolsById(idProtocol: String): List<HistoricalProtocolModel> = db.protocolDao().getAllHistoryProtocolsById(idProtocol).map { it.toDomain() }
 }

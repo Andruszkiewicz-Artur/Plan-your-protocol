@@ -5,14 +5,14 @@ import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.Proto
 import kotlinx.datetime.Clock
 
 data class ProtocolModule(
-    var idDocument: String = "",
-    var state: ProtocolRealizationType = ProtocolRealizationType.Today,
-    var time: Int? = null,
-    var date: Long? = null,
-    var resone: String? = null,
-    var editingDate: Long? = null,
-    var isSelected: Boolean = false,
-    var cadForToday: Boolean = false
+    val idDocument: String = "",
+    val state: ProtocolRealizationType = ProtocolRealizationType.Today,
+    val time: Int? = null,
+    val date: Long? = null,
+    val resone: String? = null,
+    val editingDate: Long? = null,
+    val isSelected: Boolean = false,
+    val cadForToday: Boolean = false,
 ) {
     fun toEntity() = ProtocolEntity(
             idDocument = idDocument,
@@ -22,4 +22,13 @@ data class ProtocolModule(
             resone = resone,
             editingDate = Clock.System.now().toEpochMilliseconds()
         )
+
+    fun toHistoricalProtocolModel(): HistoricalProtocolModel = HistoricalProtocolModel(
+        idProtocol = idDocument,
+        state = state,
+        time = time,
+        date = date,
+        editingDate = editingDate,
+        reason = resone
+    )
 }

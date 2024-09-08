@@ -8,12 +8,12 @@ import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.Proto
 @Entity(tableName = "Protocols")
 data class ProtocolEntity(
     @PrimaryKey(autoGenerate = false)
-    var idDocument: String,
-    var state: ProtocolRealizationType,
-    var time: Int?,
-    var date: Long?,
-    var editingDate: Long,
-    var resone: String?
+    val idDocument: String,
+    val state: ProtocolRealizationType,
+    val time: Int?,
+    val date: Long?,
+    val editingDate: Long,
+    val resone: String?,
 ) {
     fun toDomain(): ProtocolModule = ProtocolModule(idDocument, state, time, date, resone)
 }

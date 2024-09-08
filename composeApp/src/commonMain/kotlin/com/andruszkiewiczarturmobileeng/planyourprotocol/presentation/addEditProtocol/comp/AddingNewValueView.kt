@@ -38,6 +38,7 @@ fun AddingNewValueView(
     onChangeValueIdDocument: (String) -> Unit = {  },
     onClickDateOfRealization: (ProtocolRealizationType) -> Unit = {  },
     onClickUpdateView: () -> Unit,
+    presentUploadButton: Boolean,
     isEditing: Boolean
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -67,7 +68,7 @@ fun AddingNewValueView(
                 imeAction = ImeAction.Done
             ),
             trailingIcon = {
-                androidx.compose.animation.AnimatedVisibility(isEditing) {
+                androidx.compose.animation.AnimatedVisibility(isEditing && !presentUploadButton) {
                     IconButton(
                         onClick = { onClickUpdateView() }
                     ) {

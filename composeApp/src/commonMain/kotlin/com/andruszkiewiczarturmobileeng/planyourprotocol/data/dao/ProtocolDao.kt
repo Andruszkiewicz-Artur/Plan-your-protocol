@@ -4,6 +4,8 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
+import com.andruszkiewiczarturmobileeng.planyourprotocol.data.entity.HistoricalProtocolEntity
+import com.andruszkiewiczarturmobileeng.planyourprotocol.data.entity.ProtocolCountByDayEntity
 import com.andruszkiewiczarturmobileeng.planyourprotocol.data.entity.ProtocolEntity
 import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.model.ProtocolCountByDayModel
 import kotlinx.coroutines.flow.Flow
@@ -35,7 +37,7 @@ interface ProtocolDao {
         GROUP BY strftime(:type, editingDate / 1000, 'unixepoch')
         ORDER BY strftime(:type, editingDate / 1000, 'unixepoch') DESC
     """)
-    fun getProtocolListCount(type: String, min: Long, last: Long): Flow<List<ProtocolCountByDayModel>>
+    fun getProtocolListCount(type: String, min: Long, last: Long): Flow<List<ProtocolCountByDayEntity>>
 
     @Query("SELECT * FROM Protocols WHERE idDocument = :idProtocol")
     suspend fun getProtocolById(idProtocol: String): ProtocolEntity?
@@ -45,4 +47,10 @@ interface ProtocolDao {
 
     @Delete
     suspend fun deleteProtocol(protocol: ProtocolEntity)
+
+    @Upsert
+    suspend fun upsertHistoryProtocol(historicalProtocolEntity: HistoricalProtocolEntity)
+
+    @Query("SELECT * FROM HistoricalProtocols WHERE idProtocol = :idProtocol ORDER BY editingDate DESC")
+    suspend fun getAllHistoryProtocolsById(idProtocol: String): List<HistoricalProtocolEntity>
 }
