@@ -4,6 +4,7 @@ import com.andruszkiewiczarturmobileeng.planyourprotocol.data.ProtocolRepository
 import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.repository.ProtocolRepository
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.HomeViewModel
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.history.HistoryViewModel
+import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.addEditProtocol.AddEditProtocolViewModel
 import org.koin.compose.viewmodel.dsl.viewModelOf
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
@@ -26,4 +27,5 @@ private val repositories = module {
 private val viewModels = module {
     viewModelOf(::HomeViewModel)
     viewModelOf(::HistoryViewModel)
+    viewModelOf(::AddEditProtocolViewModel)
 }

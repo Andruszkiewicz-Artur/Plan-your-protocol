@@ -30,6 +30,8 @@ class ProtocolRepositoryImpl(private val db: ProtocolDatabase): ProtocolReposito
         )
     }
 
+    override suspend fun getProtocolById(idProtocol: String): ProtocolModule? = db.protocolDao().getProtocolById(idProtocol)?.toDomain()
+
     override suspend fun upsertProtocol(protocol: ProtocolModule) = db.protocolDao().upsertProtocol(protocol.toEntity())
 
     override suspend fun deleteProtocol(protocol: ProtocolModule) = db.protocolDao().deleteProtocol(protocol.toEntity())

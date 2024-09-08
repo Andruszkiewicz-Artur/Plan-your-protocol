@@ -25,7 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.model.RangeOfDataModel
-import com.andruszkiewiczarturmobileeng.planyourprotocol.unit.convertMillisToDate
+import com.andruszkiewiczarturmobileeng.planyourprotocol.util.convertMillisToDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

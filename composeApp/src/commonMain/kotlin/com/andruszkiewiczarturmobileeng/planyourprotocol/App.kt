@@ -17,12 +17,12 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.navigation.compose.rememberNavController
 import com.andruszkiewiczarturmobileeng.planyourprotocol.controller.SnackbarController
-import com.andruszkiewiczarturmobileeng.planyourprotocol.core.Static
+import com.andruszkiewiczarturmobileeng.planyourprotocol.util.Static
 import com.andruszkiewiczarturmobileeng.planyourprotocol.core.compose.KeyboardAware
 import com.andruszkiewiczarturmobileeng.planyourprotocol.core.compose.ObserveAsEvents
 import com.andruszkiewiczarturmobileeng.planyourprotocol.navigation.NavGraph
-import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.ThemType
-import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.comp.HomePresentation
+import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.addEditProtocol.ThemType
+import com.andruszkiewiczarturmobileeng.planyourprotocol.util.Constant
 import com.example.compose.darkColorScheme
 import com.example.compose.lightColorScheme
 import kotlinx.coroutines.flow.map
@@ -35,8 +35,7 @@ fun App(
     prefs: DataStore<Preferences>
 ) {
     val them by prefs.data.map { dataStore ->
-        val themKey = stringPreferencesKey(Static.THEM_PREFS)
-        ThemType.valueOf(dataStore[themKey] ?: "System")
+        ThemType.valueOf(dataStore[stringPreferencesKey(Constant.THEM_PREFS)] ?: "System")
     }.collectAsState(ThemType.System)
 
     MaterialTheme(

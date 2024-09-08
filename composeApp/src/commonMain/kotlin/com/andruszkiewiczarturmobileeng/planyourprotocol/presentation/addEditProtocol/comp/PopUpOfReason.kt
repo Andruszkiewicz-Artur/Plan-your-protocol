@@ -1,4 +1,4 @@
-package com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.comp
+package com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.addEditProtocol.comp
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement

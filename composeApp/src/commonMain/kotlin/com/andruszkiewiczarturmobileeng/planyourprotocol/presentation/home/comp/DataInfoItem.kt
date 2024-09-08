@@ -20,8 +20,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.model.ProtocolModule
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.ProtocolRealizationType
-import com.andruszkiewiczarturmobileeng.planyourprotocol.unit.convertMillisToDate
-import com.andruszkiewiczarturmobileeng.planyourprotocol.unit.convertToTime
+import com.andruszkiewiczarturmobileeng.planyourprotocol.util.convertMillisToDate
+import com.andruszkiewiczarturmobileeng.planyourprotocol.util.convertToTime
 
 @Composable
 fun DataInfoItem(

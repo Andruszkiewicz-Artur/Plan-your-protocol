@@ -10,8 +10,10 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.addEditProtocol.comp.AddEditProtocolPresentation
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.history.comp.HistoryPresentation
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.comp.HomePresentation
+import com.andruszkiewiczarturmobileeng.planyourprotocol.util.Constant
 
 @Composable
 fun NavGraph(
@@ -60,6 +62,16 @@ fun NavGraph(
         ) {
             HistoryPresentation(
                 navHostController = navController
+            )
+        }
+        composable(
+            route = Screen.AddEdit.route
+        ) {
+            val idProtocol = navController.previousBackStackEntry?.savedStateHandle?.get<String>(Constant.EDIT_PROTOCOL_ARGUMENT)
+
+            AddEditProtocolPresentation(
+                navHostController = navController,
+                idProtocol = idProtocol
             )
         }
     }

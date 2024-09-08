@@ -1,6 +1,7 @@
-package com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.comp
+package com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.addEditProtocol.comp
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -8,7 +9,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,8 +25,9 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.model.ProtocolModule
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.ProtocolRealizationType
-import com.andruszkiewiczarturmobileeng.planyourprotocol.unit.convertMillisToDate
-import com.andruszkiewiczarturmobileeng.planyourprotocol.unit.convertToTime
+import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.comp.ListOfDataStateView
+import com.andruszkiewiczarturmobileeng.planyourprotocol.util.convertMillisToDate
+import com.andruszkiewiczarturmobileeng.planyourprotocol.util.convertToTime
 
 @Composable
 fun AddingNewValueView(
@@ -29,10 +35,10 @@ fun AddingNewValueView(
     onClickShowPopUpOfReason: (Boolean) -> Unit = {  },
     onClickShowPopUpOfTimer: (Boolean) -> Unit = {  },
     onClickShowPopUpOfDate: (Boolean) -> Unit = {  },
-    onClickAdd: () -> Unit = {  },
     onChangeValueIdDocument: (String) -> Unit = {  },
     onClickDateOfRealization: (ProtocolRealizationType) -> Unit = {  },
-    isEditing: Boolean = true
+    onClickUpdateView: () -> Unit,
+    isEditing: Boolean
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -60,6 +66,18 @@ fun AddingNewValueView(
                 capitalization = KeyboardCapitalization.None,
                 imeAction = ImeAction.Done
             ),
+            trailingIcon = {
+                androidx.compose.animation.AnimatedVisibility(isEditing) {
+                    IconButton(
+                        onClick = { onClickUpdateView() }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Upload,
+                            contentDescription = null
+                        )
+                    }
+                }
+            },
         )
 
         ListOfDataStateView(
@@ -116,21 +134,5 @@ fun AddingNewValueView(
                 }
             }
         }
-
-        Spacer(Modifier.height(12.dp))
-
-        Button(
-            onClick = onClickAdd
-        ) {
-            AnimatedContent(isEditing) { editing ->
-                if (editing) {
-                    Text(text = "Update value")
-                } else {
-                    Text(text = "Add new value")
-                }
-            }
-        }
-
-        Spacer(Modifier.height(12.dp))
     }
 }

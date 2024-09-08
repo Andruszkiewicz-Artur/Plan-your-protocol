@@ -10,6 +10,7 @@ interface ProtocolRepository {
     fun getAllTodayProtocols(startDay: Long, endDay: Long): Flow<List<ProtocolModule>>
     fun getCountOfAllProtocolsInThisMonth(): Flow<Int>
     fun getListOfProtocolCount(type: PresentedTypeDate, range: RangeOfDataModel): Flow<List<ProtocolCountByDayModel>>
+    suspend fun getProtocolById(idProtocol: String): ProtocolModule?
     suspend fun upsertProtocol(protocol: ProtocolModule)
     suspend fun deleteProtocol(protocol: ProtocolModule)
 }

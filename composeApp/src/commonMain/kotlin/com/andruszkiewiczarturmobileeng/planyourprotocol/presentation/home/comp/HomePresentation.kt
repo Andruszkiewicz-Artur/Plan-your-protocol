@@ -15,8 +15,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDownward
-import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.ChevronRight
@@ -25,6 +24,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -47,12 +47,12 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.navigation.NavHostController
-import com.andruszkiewiczarturmobileeng.planyourprotocol.core.Static
 import com.andruszkiewiczarturmobileeng.planyourprotocol.navigation.Screen
-import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.CalendarOption
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.HomeEvent
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.HomeViewModel
-import com.andruszkiewiczarturmobileeng.planyourprotocol.unit.convertLongToStringDate
+import com.andruszkiewiczarturmobileeng.planyourprotocol.util.Constant
+import com.andruszkiewiczarturmobileeng.planyourprotocol.util.Static
+import com.andruszkiewiczarturmobileeng.planyourprotocol.util.convertLongToStringDate
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
@@ -74,6 +74,18 @@ fun HomePresentation(
         snackbarHost = {
             SnackbarHost(snackbarHostState)
         },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    navHostController.navigate(Screen.AddEdit.route)
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = null
+                )
+            }
+        },
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
@@ -90,27 +102,6 @@ fun HomePresentation(
                             contentDescription = null
                         )
                     }
-                    AnimatedContent(state.isPresentedAddNewProtocol) { isPresented ->
-                        if(isPresented) {
-                            IconButton(
-                                onClick = { vm.onEvent(HomeEvent.ClickPresentAddNewValue) }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Filled.ArrowUpward,
-                                    contentDescription = null
-                                )
-                            }
-                        } else {
-                            IconButton(
-                                onClick = { vm.onEvent(HomeEvent.ClickPresentAddNewValue) }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Filled.ArrowDownward,
-                                    contentDescription = null
-                                )
-                            }
-                        }
-                    }
                 }
             )
         }
@@ -122,19 +113,6 @@ fun HomePresentation(
                 .padding(horizontal = 8.dp)
         ) {
             item {
-                AnimatedVisibility(state.isPresentedAddNewProtocol) {
-                    AddingNewValueView(
-                        dataInfo = state.currentProtocol,
-                        onClickShowPopUpOfReason = { vm.onEvent(HomeEvent.ChangeStatusOfPopUpOfReason(it)) },
-                        onClickShowPopUpOfTimer = { vm.onEvent(HomeEvent.ChangeStatusOfPopUpOfTimer(it)) },
-                        onClickShowPopUpOfDate = { vm.onEvent(HomeEvent.ChangeStatusOfPopUpOfCalendar(it, CalendarOption.CadDate))  },
-                        onClickAdd = { vm.onEvent(HomeEvent.SetProtocol()) },
-                        onChangeValueIdDocument = { vm.onEvent(HomeEvent.SetIdOfProtocol(it)) },
-                        onClickDateOfRealization = { vm.onEvent(HomeEvent.SetTypeOfPlaningProtocol(it)) },
-                        isEditing = state.isEditing
-                    )
-                }
-
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
@@ -170,7 +148,7 @@ fun HomePresentation(
                             )
 
                             IconButton(
-                                onClick = { vm.onEvent(HomeEvent.ChangeStatusOfPopUpOfCalendar(true, CalendarOption.PresentingCurrentListDate)) }
+                                onClick = { vm.onEvent(HomeEvent.ChangeStatusOfPopUpOfCalendar(true)) }
                             ) {
                                 Icon(
                                     imageVector = Icons.Filled.CalendarMonth,
@@ -283,7 +261,14 @@ fun HomePresentation(
                 DataInfoItem(
                     protocol = protocol,
                     onClickDelete = { vm.onEvent(HomeEvent.DeleteProtocol(protocol)) },
-                    onClickEdit = { vm.onEvent(HomeEvent.ChooseProtocol(protocol)) },
+                    onClickEdit = {
+//                        vm.onEvent(HomeEvent.ChooseProtocol(protocol))
+                        navHostController.currentBackStackEntry?.savedStateHandle?.set(
+                            Constant.EDIT_PROTOCOL_ARGUMENT,
+                            protocol.idDocument
+                        )
+                        navHostController.navigate(Screen.AddEdit.route)
+                    },
                     onClickSelect = {vm.onEvent(HomeEvent.SelectProtocol(protocol, it))}
                 )
 
@@ -294,44 +279,13 @@ fun HomePresentation(
         }
     }
 
-    AnimatedVisibility(state.isPresentedReasons) {
-        PopUpOfReasonDialog(
-            onDismiss = { vm.onEvent(HomeEvent.ChangeStatusOfPopUpOfReason(false)) },
-            onSave = {
-                vm.onEvent(HomeEvent.SetReasonOfProtocol(it))
-                vm.onEvent(HomeEvent.ChangeStatusOfPopUpOfReason(false))
-            }
-        )
-    }
-
-    AnimatedVisibility(state.isPresentedTimer) {
-        PopUpOfTimer(
-            onDismiss = { vm.onEvent(HomeEvent.ChangeStatusOfPopUpOfTimer(false)) },
-            onSave = {
-                vm.onEvent(HomeEvent.SetTimeOfProtocol(it))
-                vm.onEvent(HomeEvent.ChangeStatusOfPopUpOfTimer(false))
-            }
-        )
-    }
-
-    AnimatedVisibility(state.isPresentedCalendar) {
-        PopUpOfCalendar(
-            onDismiss = { vm.onEvent(HomeEvent.ChangeStatusOfPopUpOfCalendar(false, null)) },
-            onSave = {
-                vm.onEvent(HomeEvent.SetDate(it))
-                vm.onEvent(HomeEvent.ChangeStatusOfPopUpOfCalendar(false, null))
-            }
-        )
-    }
-
     AnimatedVisibility(state.isPresentedSettings) {
         PopUpOfSettings(
             onDismiss = { vm.onEvent(HomeEvent.ChangeStatusOfPopUpOfSettings(false)) },
             onClickButton = { themType ->
                 scope.launch {
                     prefs.edit { dataStore ->
-                        val themKey = stringPreferencesKey(Static.THEM_PREFS)
-                        dataStore[themKey] = themType.name
+                        dataStore[stringPreferencesKey(Constant.THEM_PREFS)] = themType.name
                     }
                 }
             }

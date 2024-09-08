@@ -1,4 +1,4 @@
-package com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.comp
+package com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.addEditProtocol.comp
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
@@ -26,7 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.andruszkiewiczarturmobileeng.planyourprotocol.core.compose.AlertDialogDefault
-import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.TimerType
+import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.addEditProtocol.TimerType
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime

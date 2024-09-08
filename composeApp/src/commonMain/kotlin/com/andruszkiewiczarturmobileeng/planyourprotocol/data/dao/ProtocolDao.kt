@@ -37,6 +37,9 @@ interface ProtocolDao {
     """)
     fun getProtocolListCount(type: String, min: Long, last: Long): Flow<List<ProtocolCountByDayModel>>
 
+    @Query("SELECT * FROM Protocols WHERE idDocument = :idProtocol")
+    suspend fun getProtocolById(idProtocol: String): ProtocolEntity?
+
     @Upsert
     suspend fun upsertProtocol(protocol: ProtocolEntity)
 

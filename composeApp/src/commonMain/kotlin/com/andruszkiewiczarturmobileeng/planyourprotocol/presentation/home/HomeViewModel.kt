@@ -8,15 +8,13 @@ import com.andruszkiewiczarturmobileeng.planyourprotocol.controller.SnackbarCont
 import com.andruszkiewiczarturmobileeng.planyourprotocol.controller.SnackbarEvent
 import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.model.ProtocolModule
 import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.repository.ProtocolRepository
-import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.CalendarOption.CadDate
-import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.CalendarOption.PresentingCurrentListDate
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.ProtocolRealizationType.CAD
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.ProtocolRealizationType.Canceled
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.ProtocolRealizationType.Today
-import com.andruszkiewiczarturmobileeng.planyourprotocol.unit.convertMillisToDate
-import com.andruszkiewiczarturmobileeng.planyourprotocol.unit.convertToTime
-import com.andruszkiewiczarturmobileeng.planyourprotocol.unit.getStartAndEndOfDay
-import com.andruszkiewiczarturmobileeng.planyourprotocol.unit.isTodayValue
+import com.andruszkiewiczarturmobileeng.planyourprotocol.util.convertMillisToDate
+import com.andruszkiewiczarturmobileeng.planyourprotocol.util.convertToTime
+import com.andruszkiewiczarturmobileeng.planyourprotocol.util.getStartAndEndOfDay
+import com.andruszkiewiczarturmobileeng.planyourprotocol.util.isTodayValue
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -49,13 +47,9 @@ class HomeViewModel(
         when (event) {
             is HomeEvent.ChangeStatusOfPopUpOfCalendar -> {
                 _state.update { it.copy(
-                    isPresentedCalendar = event.isPresented,
-                    typeOfPresentingCalendar = event.option
+                    isPresentedCalendar = event.isPresented
                 ) }
             }
-            is HomeEvent.ChangeStatusOfPopUpOfReason -> _state.update { it.copy(isPresentedReasons = event.isPresented) }
-            is HomeEvent.ChangeStatusOfPopUpOfTimer -> _state.update { it.copy(isPresentedTimer = event.isPresented) }
-            is HomeEvent.ChooseProtocol -> _state.update { it.copy(currentProtocol = event.protocol) }
             is HomeEvent.DeleteProtocol -> {
                 viewModelScope.launch {
                     repository.deleteProtocol(event.protocol)
@@ -66,73 +60,15 @@ class HomeViewModel(
                             action = SnackbarAction(
                                 name = "Undo",
                                 action = {
-                                    onEvent(HomeEvent.SetProtocol(event.protocol))
+                                    viewModelScope.launch {
+                                        repository.upsertProtocol(event.protocol)
+                                    }
                                 }
                             )
                         )
                     )
                 }
             }
-            is HomeEvent.SetDate -> {
-                if (event.date != null) {
-                    when (_state.value.typeOfPresentingCalendar) {
-                        PresentingCurrentListDate -> _state.update { it.copy(currentDatePresenting = event.date) }
-                        CadDate -> _state.update { it.copy(currentProtocol = it.currentProtocol.copy(date = event.date)) }
-                        null -> { /*In others situation don`t update data*/ }
-                    }
-                }
-            }
-            is HomeEvent.SetIdOfProtocol -> _state.update {
-                it.copy(
-                    currentProtocol = it.currentProtocol.copy(idDocument = event.idProtocol),
-                    isEditing = it.protocolsList.any { it.idDocument == event.idProtocol}
-                )
-            }
-            is HomeEvent.SetProtocol -> {
-                var currentProtocol = event.protocol ?: _state.value.currentProtocol
-                var shouldProceed = false
-
-                viewModelScope.launch {
-                    when(currentProtocol.state) {
-                        Today -> if (currentProtocol.idDocument.isNotBlank() && currentProtocol.time != null) {
-                            shouldProceed = true
-                            currentProtocol = currentProtocol.copy(
-                                date = null,
-                                resone = null
-                            )
-                        }
-                        CAD -> if (currentProtocol.idDocument.isNotBlank() && currentProtocol.date != null && currentProtocol.resone != null) {
-                            shouldProceed = true
-                            currentProtocol = currentProtocol.copy(
-                                time = null
-                            )
-                        }
-                        else -> if (currentProtocol.idDocument.isNotBlank()) {
-                            shouldProceed = true
-                            currentProtocol = currentProtocol.copy(
-                                date = null,
-                                resone = null,
-                                time = null
-                            )
-                        }
-                    }
-
-                    if (shouldProceed) {
-                        repository.upsertProtocol(currentProtocol)
-                        _state.update { it.copy(currentProtocol = ProtocolModule()) }
-
-                        SnackbarController.sendEvent(
-                            event = SnackbarEvent(
-                                message = "Add/Update protocol!",
-                                action = null
-                            )
-                        )
-                    }
-                }
-            }
-            is HomeEvent.SetReasonOfProtocol -> _state.update { it.copy(currentProtocol = it.currentProtocol.copy(resone = event.reason)) }
-            is HomeEvent.SetTimeOfProtocol -> _state.update { it.copy(currentProtocol = it.currentProtocol.copy(time = event.time)) }
-            is HomeEvent.SetTypeOfPlaningProtocol -> _state.update { it.copy(currentProtocol = it.currentProtocol.copy(state = event.type)) }
             is HomeEvent.SelectProtocol -> {
                 _state.update { it.copy(
                     protocolsList = it.protocolsList.map {
@@ -182,11 +118,6 @@ class HomeViewModel(
                         )
                     }
                 }
-            }
-            HomeEvent.ClickPresentAddNewValue -> {
-                _state.update { it.copy(
-                    isPresentedAddNewProtocol = !it.isPresentedAddNewProtocol
-                ) }
             }
             is HomeEvent.ChangeDateListOfProtocols -> {
                 _state.update { it.copy(
