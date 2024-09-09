@@ -12,6 +12,7 @@ sealed class AddEditEvent {
     data class SetTimeOfProtocol(val time: Int?): AddEditEvent()
     data class SetDate(val date: Long?): AddEditEvent()
     data class SetReasonOfProtocol(val reason: String): AddEditEvent()
+    data class SetUpDescription(val value: String): AddEditEvent()
     data object SaveProtocol: AddEditEvent()
 
     //PopUps

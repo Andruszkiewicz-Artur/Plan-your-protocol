@@ -113,6 +113,7 @@ fun AddEditProtocolPresentation(
                 onClickDateOfRealization = { vm.onEvent(AddEditEvent.SetTypeOfPlaningProtocol(it)) },
                 onClickUpdateView = { vm.onEvent(AddEditEvent.SetUpProtocol(state.protocol.idDocument)) },
                 presentUploadButton = state.updateProtocol.idDocument == state.protocol.idDocument,
+                onChangeDescription = { vm.onEvent(AddEditEvent.SetUpDescription(it)) },
                 isEditing = state.isEditingMode
             )
 

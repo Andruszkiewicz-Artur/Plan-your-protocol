@@ -1,5 +1,6 @@
 package com.andruszkiewiczarturmobileeng.planyourprotocol.data
 
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
@@ -10,9 +11,11 @@ import com.andruszkiewiczarturmobileeng.planyourprotocol.data.entity.HistoricalP
 import com.andruszkiewiczarturmobileeng.planyourprotocol.data.entity.ProtocolEntity
 
 @Database(
-    version = 2,
+    version = 3,
     entities = [ProtocolEntity::class, HistoricalProtocolEntity::class],
-    autoMigrations = []
+    autoMigrations = [
+        AutoMigration(from = 2, to = 3)
+    ]
 )
 abstract class ProtocolDatabase: RoomDatabase(), DB {
 

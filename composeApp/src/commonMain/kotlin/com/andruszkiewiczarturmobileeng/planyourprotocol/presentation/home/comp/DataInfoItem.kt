@@ -28,7 +28,8 @@ fun DataInfoItem(
     protocol: ProtocolModule,
     onClickSelect: (Boolean) -> Unit,
     onClickEdit: () -> Unit,
-    onClickDelete: () -> Unit
+    onClickDelete: () -> Unit,
+    showCheckBox: Boolean = true
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -42,12 +43,14 @@ fun DataInfoItem(
             modifier = Modifier
                 .fillMaxWidth(0.7f)
         ) {
-            Checkbox(
-                checked = protocol.isSelected,
-                onCheckedChange = {
-                    onClickSelect(it)
-                }
-            )
+            if (showCheckBox) {
+                Checkbox(
+                    checked = protocol.isSelected,
+                    onCheckedChange = {
+                        onClickSelect(it)
+                    }
+                )
+            }
 
             Text(
                 text = "${protocol.idDocument} - " + when(protocol.state) {

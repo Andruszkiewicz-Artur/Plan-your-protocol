@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -38,100 +39,126 @@ fun AddingNewValueView(
     onChangeValueIdDocument: (String) -> Unit = {  },
     onClickDateOfRealization: (ProtocolRealizationType) -> Unit = {  },
     onClickUpdateView: () -> Unit,
+    onChangeDescription: (String) -> Unit = { },
     presentUploadButton: Boolean,
     isEditing: Boolean
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    Column(
+    LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxWidth()
     ) {
-        Spacer(Modifier.height(12.dp))
+        item {
+            Spacer(Modifier.height(12.dp))
 
-        OutlinedTextField(
-            value = dataInfo.idDocument,
-            onValueChange = { onChangeValueIdDocument(it) },
-            placeholder = {
-                Text(
-                    text = "Id..."
-                )
-            },
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    keyboardController?.hide()
+            OutlinedTextField(
+                value = dataInfo.idDocument,
+                onValueChange = { onChangeValueIdDocument(it) },
+                placeholder = {
+                    Text(
+                        text = "Id..."
+                    )
+                },
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        keyboardController?.hide()
+                    }
+                ),
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    capitalization = KeyboardCapitalization.None,
+                    imeAction = ImeAction.Done
+                ),
+                trailingIcon = {
+                    androidx.compose.animation.AnimatedVisibility(isEditing && !presentUploadButton) {
+                        IconButton(
+                            onClick = { onClickUpdateView() }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Upload,
+                                contentDescription = null
+                            )
+                        }
+                    }
+                },
+            )
+
+            ListOfDataStateView(
+                currentState = dataInfo.state,
+                onClick = {
+                    onClickDateOfRealization(it)
                 }
-            ),
-            keyboardOptions = KeyboardOptions.Default.copy(
-                capitalization = KeyboardCapitalization.None,
-                imeAction = ImeAction.Done
-            ),
-            trailingIcon = {
-                androidx.compose.animation.AnimatedVisibility(isEditing && !presentUploadButton) {
-                    IconButton(
-                        onClick = { onClickUpdateView() }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Upload,
-                            contentDescription = null
-                        )
+            )
+
+            AnimatedContent(dataInfo.state) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    when (dataInfo.state) {
+                        ProtocolRealizationType.Today -> {
+                            Spacer(Modifier.height(12.dp))
+
+                            OutlinedTextField(
+                                value = dataInfo.time?.convertToTime() ?: "",
+                                onValueChange = {},
+                                enabled = false,
+                                readOnly = true,
+                                placeholder = { Text(text = "Time...") },
+                                modifier = Modifier
+                                    .clickable { onClickShowPopUpOfTimer(true) }
+                            )
+                        }
+                        ProtocolRealizationType.CAD -> {
+                            Spacer(Modifier.height(12.dp))
+
+                            OutlinedTextField(
+                                value = dataInfo.date?.convertMillisToDate() ?: "",
+                                onValueChange = {},
+                                enabled = false,
+                                readOnly = true,
+                                placeholder = { Text(text = "Date...") },
+                                modifier = Modifier
+                                    .clickable { onClickShowPopUpOfDate(true) }
+                            )
+
+                            Spacer(Modifier.height(12.dp))
+
+                            OutlinedTextField(
+                                value = dataInfo.resone ?: "",
+                                onValueChange = {},
+                                enabled = false,
+                                readOnly = true,
+                                placeholder = { Text(text = "Resone...") },
+                                modifier = Modifier
+                                    .clickable { onClickShowPopUpOfReason(true) }
+                            )
+                        }
+                        else -> { /*In others situation view is empty */ }
                     }
-                }
-            },
-        )
 
-        ListOfDataStateView(
-            currentState = dataInfo.state,
-            onClick = {
-                onClickDateOfRealization(it)
-            }
-        )
+                    Spacer(modifier = Modifier.height(16.dp))
 
-        AnimatedContent(dataInfo.state) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                when (dataInfo.state) {
-                    ProtocolRealizationType.Today -> {
-                        Spacer(Modifier.height(12.dp))
-
-                        OutlinedTextField(
-                            value = dataInfo.time?.convertToTime() ?: "",
-                            onValueChange = {},
-                            enabled = false,
-                            readOnly = true,
-                            placeholder = { Text(text = "Time...") },
-                            modifier = Modifier
-                                .clickable { onClickShowPopUpOfTimer(true) }
-                        )
-                    }
-                    ProtocolRealizationType.CAD -> {
-                        Spacer(Modifier.height(12.dp))
-
-                        OutlinedTextField(
-                            value = dataInfo.date?.convertMillisToDate() ?: "",
-                            onValueChange = {},
-                            enabled = false,
-                            readOnly = true,
-                            placeholder = { Text(text = "Date...") },
-                            modifier = Modifier
-                                .clickable { onClickShowPopUpOfDate(true) }
-                        )
-
-                        Spacer(Modifier.height(12.dp))
-
-                        OutlinedTextField(
-                            value = dataInfo.resone ?: "",
-                            onValueChange = {},
-                            enabled = false,
-                            readOnly = true,
-                            placeholder = { Text(text = "Resone...") },
-                            modifier = Modifier
-                                .clickable { onClickShowPopUpOfReason(true) }
-                        )
-                    }
-                    else -> { /*In others situation view is empty */ }
+                    OutlinedTextField(
+                        value = dataInfo.description,
+                        onValueChange = { onChangeDescription(it) },
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                keyboardController?.hide()
+                            }
+                        ),
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            capitalization = KeyboardCapitalization.None,
+                            imeAction = ImeAction.Done
+                        ),
+                        placeholder = {
+                            Text(
+                                text = "Description..."
+                            )
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
                 }
             }
         }

@@ -61,7 +61,8 @@ fun SearchListView(
                     )
                     navHostController.navigate(Screen.AddEdit.route)
                 },
-                onClickSelect = {vm.onEvent(HomeEvent.SelectProtocol(protocol, it))}
+                onClickSelect = {vm.onEvent(HomeEvent.SelectProtocol(protocol, it))},
+                showCheckBox = false
             )
 
             if (state.searchingList.last() != protocol) {

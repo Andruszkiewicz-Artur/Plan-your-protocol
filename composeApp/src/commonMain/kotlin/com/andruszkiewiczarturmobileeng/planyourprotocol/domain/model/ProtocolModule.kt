@@ -12,6 +12,7 @@ data class ProtocolModule(
     val resone: String? = null,
     val editingDate: Long? = null,
     val isSelected: Boolean = false,
+    val description: String = "",
     val cadForToday: Boolean = false,
 ) {
     fun toEntity() = ProtocolEntity(
@@ -20,6 +21,7 @@ data class ProtocolModule(
             time = time,
             date = date,
             resone = resone,
+            description = description,
             editingDate = Clock.System.now().toEpochMilliseconds()
         )
 
