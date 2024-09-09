@@ -1,6 +1,7 @@
 package com.andruszkiewiczarturmobileeng.planyourprotocol.domain.repository
 
 import com.andruszkiewiczarturmobileeng.planyourprotocol.data.entity.HistoricalProtocolEntity
+import com.andruszkiewiczarturmobileeng.planyourprotocol.data.entity.ProtocolEntity
 import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.model.HistoricalProtocolModel
 import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.model.ProtocolCountByDayModel
 import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.model.ProtocolModule
@@ -18,4 +19,5 @@ interface ProtocolRepository {
 
     suspend fun upsertHistoryProtocol(historicalProtocolModel: HistoricalProtocolModel)
     suspend fun getAllHistoryProtocolsById(idProtocol: String): List<HistoricalProtocolModel>
+    suspend fun searchListOfProtocol(idProtocol: String): List<ProtocolModule>
 }

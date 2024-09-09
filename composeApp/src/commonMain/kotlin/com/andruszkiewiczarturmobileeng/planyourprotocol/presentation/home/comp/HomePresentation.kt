@@ -14,12 +14,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -29,18 +32,26 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -51,8 +62,6 @@ import com.andruszkiewiczarturmobileeng.planyourprotocol.navigation.Screen
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.HomeEvent
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.HomeViewModel
 import com.andruszkiewiczarturmobileeng.planyourprotocol.util.Constant
-import com.andruszkiewiczarturmobileeng.planyourprotocol.util.Static
-import com.andruszkiewiczarturmobileeng.planyourprotocol.util.convertLongToStringDate
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
@@ -65,216 +74,118 @@ fun HomePresentation(
     navHostController: NavHostController
 ) {
     val state = vm.state.collectAsState().value
-    val clipboardManager = LocalClipboardManager.current
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
-
+    val focusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     Scaffold(
         snackbarHost = {
             SnackbarHost(snackbarHostState)
         },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    navHostController.navigate(Screen.AddEdit.route)
+            AnimatedVisibility(!state.isSearchValue) {
+                FloatingActionButton(
+                    onClick = {
+                        navHostController.navigate(Screen.AddEdit.route)
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Add,
+                        contentDescription = null
+                    )
                 }
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Add,
-                    contentDescription = null
-                )
             }
         },
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                    Text(
-                        text = "Plan Your day"
-                    )
-                },
-                actions = {
-                    IconButton(
-                        onClick = { vm.onEvent(HomeEvent.ChangeStatusOfPopUpOfSettings(true)) }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Settings,
-                            contentDescription = null
-                        )
-                    }
-                }
-            )
-        }
-    ) { padding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(horizontal = 8.dp)
-        ) {
-            item {
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                        .padding(top = 16.dp)
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Text(
-                            text = "Protocols date",
-                            style = MaterialTheme.typography.titleLarge
-                        )
-
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            IconButton(
-                                onClick = { vm.onEvent(HomeEvent.ChangeDateListOfProtocols(true)) }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Filled.ChevronLeft,
-                                    contentDescription = null
-                                )
-                            }
-
-                            Text(
-                                text = state.currentDatePresenting.convertLongToStringDate(),
-                                style = MaterialTheme.typography.titleMedium
-                            )
-
-                            IconButton(
-                                onClick = { vm.onEvent(HomeEvent.ChangeStatusOfPopUpOfCalendar(true)) }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Filled.CalendarMonth,
-                                    contentDescription = null
-                                )
-                            }
-
-                            IconButton(
-                                onClick = { vm.onEvent(HomeEvent.ChangeDateListOfProtocols(false)) }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Filled.ChevronRight,
-                                    contentDescription = null
-                                )
-                            }
-                        }
-                    }
-
-                    Spacer(Modifier.width(16.dp))
-
-                    Row {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier
-                        ) {
-                            Text(
-                                text = "This month",
-                                style = MaterialTheme.typography.labelLarge
-                            )
-
-                            Spacer(Modifier.height(4.dp))
-
-                            Text(
-                                text = "${state.protocolsInThisMonth}",
-                                style = MaterialTheme.typography.labelMedium
-                            )
-                        }
-
-                        IconButton(
-                            onClick = { navHostController.navigate(Screen.History.route) }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Outlined.Info,
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .size(30.dp)
-                            )
-                        }
-                    }
-                }
-
-                AnimatedVisibility(
-                    state.protocolsList.isNotEmpty(),
-                    modifier = Modifier
-                        .padding(horizontal = 8.dp)
-                        .fillMaxWidth()
-                ) {
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                             .fillMaxWidth()
                     ) {
-                        TextButton(
-                            onClick = { vm.onEvent(HomeEvent.ChangeAllSelection(!state.isAllSelected)) }
-                        ) {
-                            AnimatedContent(state.isAllSelected) { isSelected ->
-                                if (isSelected) {
-                                    Text(
-                                        text = "Unselect All"
-                                    )
-                                } else {
-                                    Text(
-                                        text = "Select All"
-                                    )
+                        OutlinedTextField(
+                            value = state.searchValue,
+                            onValueChange = {
+                                vm.onEvent(HomeEvent.ChangeSearchValue(it))
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Filled.Search,
+                                    contentDescription = null
+                                )
+                            },
+                            keyboardActions = KeyboardActions(
+                                onDone = {
+                                    keyboardController?.hide()
                                 }
+                            ),
+                            keyboardOptions = KeyboardOptions.Default.copy(
+                                capitalization = KeyboardCapitalization.None,
+                                imeAction = ImeAction.Done
+                            ),
+                            modifier = Modifier
+                                .focusRequester(focusRequester)
+                                .onFocusChanged {
+                                    if (it.isFocused) vm.onEvent(HomeEvent.ChangeSearchState(true))
+                                }
+                                .weight(1f)
+                                .padding(horizontal = 16.dp)
+                        )
+
+                        androidx.compose.animation.AnimatedVisibility (state.isSearchValue) {
+                            TextButton(
+                                onClick = {
+                                    vm.onEvent(HomeEvent.ChangeSearchState(false))
+                                    keyboardController?.hide()
+                                    focusManager.clearFocus()
+                                },
+                                modifier = Modifier
+                                    .weight(1f)
+                            ) {
+                                Text(
+                                    text = "Cancel"
+                                )
                             }
                         }
+                    }
 
-
+                },
+                actions = {
+                    AnimatedVisibility(!state.isSearchValue) {
                         IconButton(
-                            onClick = {
-                                vm.onEvent(HomeEvent.ClickCopyData(clipboardManager))
-                            }
+                            onClick = { vm.onEvent(HomeEvent.ChangeStatusOfPopUpOfSettings(true)) }
                         ) {
                             Icon(
-                                imageVector = Icons.Default.ContentCopy,
+                                imageVector = Icons.Filled.Settings,
                                 contentDescription = null
                             )
                         }
                     }
                 }
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                AnimatedVisibility(state.protocolsList.isEmpty()) {
-                    Row(
-                        horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    ) {
-                        Text(
-                            text = "Today's list is empty",
-                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.3f)
-                        )
-                    }
-                }
-            }
-
-            items(state.protocolsList) { protocol ->
-                DataInfoItem(
-                    protocol = protocol,
-                    onClickDelete = { vm.onEvent(HomeEvent.DeleteProtocol(protocol)) },
-                    onClickEdit = {
-//                        vm.onEvent(HomeEvent.ChooseProtocol(protocol))
-                        navHostController.currentBackStackEntry?.savedStateHandle?.set(
-                            Constant.EDIT_PROTOCOL_ARGUMENT,
-                            protocol.idDocument
-                        )
-                        navHostController.navigate(Screen.AddEdit.route)
-                    },
-                    onClickSelect = {vm.onEvent(HomeEvent.SelectProtocol(protocol, it))}
+            )
+        }
+    ) { padding ->
+        AnimatedContent(
+            state.isSearchValue,
+            modifier = Modifier
+                .padding(padding)
+        ) { isSearching ->
+            if (isSearching) {
+                SearchListView(
+                    vm = vm,
+                    state = state,
+                    navHostController = navHostController
                 )
-
-                if (state.protocolsList.last() != protocol) {
-                    HorizontalDivider()
-                }
+            } else {
+                ProtocolListView(
+                    vm = vm,
+                    state = state,
+                    navHostController = navHostController
+                )
             }
         }
     }

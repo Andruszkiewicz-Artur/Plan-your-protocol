@@ -40,4 +40,6 @@ class ProtocolRepositoryImpl(private val db: ProtocolDatabase): ProtocolReposito
     override suspend fun upsertHistoryProtocol(historicalProtocolModel: HistoricalProtocolModel) = db.protocolDao().upsertHistoryProtocol(historicalProtocolModel.toEntity())
 
     override suspend fun getAllHistoryProtocolsById(idProtocol: String): List<HistoricalProtocolModel> = db.protocolDao().getAllHistoryProtocolsById(idProtocol).map { it.toDomain() }
+
+    override suspend fun searchListOfProtocol(idProtocol: String): List<ProtocolModule> = db.protocolDao().searchListOfProtocol(idProtocol).map { it.toDomain() }
 }

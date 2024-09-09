@@ -53,4 +53,7 @@ interface ProtocolDao {
 
     @Query("SELECT * FROM HistoricalProtocols WHERE idProtocol = :idProtocol ORDER BY editingDate DESC")
     suspend fun getAllHistoryProtocolsById(idProtocol: String): List<HistoricalProtocolEntity>
+
+    @Query("SELECT * FROM Protocols WHERE idDocument LIKE '%' || :documentId || '%' LIMIT 20")
+    suspend fun searchListOfProtocol(documentId: String): List<ProtocolEntity>
 }

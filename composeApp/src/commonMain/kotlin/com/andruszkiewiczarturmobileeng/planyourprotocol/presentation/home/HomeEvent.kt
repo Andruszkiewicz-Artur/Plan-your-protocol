@@ -14,4 +14,8 @@ sealed class HomeEvent {
     data class ChangeAllSelection(val select: Boolean): HomeEvent()
     data class ChangeDateListOfProtocols(val isPrevious: Boolean): HomeEvent()
     data class ClickCopyData(val clipboardManager: ClipboardManager): HomeEvent()
+
+    //Search
+    data class ChangeSearchValue(val value: String): HomeEvent()
+    data class ChangeSearchState(val isSearching: Boolean): HomeEvent()
 }

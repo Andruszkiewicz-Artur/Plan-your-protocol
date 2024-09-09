@@ -135,6 +135,23 @@ class HomeViewModel(
                     isPresentedSettings = event.isPresented
                 ) }
             }
+            is HomeEvent.ChangeSearchState -> {
+                if (event.isSearching != _state.value.isSearchValue) {
+                    _state.update { it.copy(
+                        isSearchValue = event.isSearching,
+                        searchValue = "",
+                        searchingList = emptyList()
+                    ) }
+                }
+            }
+            is HomeEvent.ChangeSearchValue -> {
+                _state.update { it.copy(
+                    searchValue = event.value
+                ) }
+
+                if (_state.value.searchValue.isNotBlank()) getListOfSearchProtocols()
+                else _state.update { it.copy(searchingList = emptyList()) }
+            }
         }
     }
 
@@ -158,6 +175,14 @@ class HomeViewModel(
             repository.getCountOfAllProtocolsInThisMonth().collect { count ->
                 _state.update { it.copy(protocolsInThisMonth = count) }
             }
+        }
+    }
+
+    private fun getListOfSearchProtocols() {
+        viewModelScope.launch {
+            _state.update { it.copy(
+                searchingList = repository.searchListOfProtocol(_state.value.searchValue)
+            ) }
         }
     }
 }

@@ -14,5 +14,8 @@ data class HomeState(
     val protocolsInThisMonth: Int = 0,
     val isAllSelected: Boolean = false,
     val isPresentedAddNewProtocol: Boolean = true,
-    var currentDatePresenting: Long = Clock.System.now().toEpochMilliseconds()
+    val currentDatePresenting: Long = Clock.System.now().toEpochMilliseconds(),
+    val isSearchValue: Boolean = false,
+    val searchValue: String = "",
+    val searchingList: List<ProtocolModule> = emptyList()
 )
