@@ -152,6 +152,13 @@ class HomeViewModel(
                 if (_state.value.searchValue.isNotBlank()) getListOfSearchProtocols()
                 else _state.update { it.copy(searchingList = emptyList()) }
             }
+            is HomeEvent.SetDate -> {
+                _state.update { it.copy(
+                    currentDatePresenting = event.date ?: it.currentDatePresenting
+                ) }
+
+                getAllProtocols()
+            }
         }
     }
 

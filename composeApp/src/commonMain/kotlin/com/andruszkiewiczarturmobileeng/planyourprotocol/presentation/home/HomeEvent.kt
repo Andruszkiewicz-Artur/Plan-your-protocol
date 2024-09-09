@@ -2,6 +2,7 @@ package com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home
 
 import androidx.compose.ui.platform.ClipboardManager
 import com.andruszkiewiczarturmobileeng.planyourprotocol.domain.model.ProtocolModule
+import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.addEditProtocol.AddEditEvent
 
 sealed class HomeEvent {
     //PopUps
@@ -12,6 +13,7 @@ sealed class HomeEvent {
     data class DeleteProtocol(val protocol: ProtocolModule): HomeEvent()
     data class SelectProtocol(val protocol: ProtocolModule, val isSelected: Boolean): HomeEvent()
     data class ChangeAllSelection(val select: Boolean): HomeEvent()
+    data class SetDate(val date: Long?): HomeEvent()
     data class ChangeDateListOfProtocols(val isPrevious: Boolean): HomeEvent()
     data class ClickCopyData(val clipboardManager: ClipboardManager): HomeEvent()
 

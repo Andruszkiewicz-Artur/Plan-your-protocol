@@ -59,6 +59,8 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.navigation.NavHostController
 import com.andruszkiewiczarturmobileeng.planyourprotocol.navigation.Screen
+import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.addEditProtocol.AddEditEvent
+import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.addEditProtocol.comp.PopUpOfCalendar
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.HomeEvent
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.home.HomeViewModel
 import com.andruszkiewiczarturmobileeng.planyourprotocol.util.Constant
@@ -188,6 +190,16 @@ fun HomePresentation(
                 )
             }
         }
+    }
+
+    AnimatedVisibility(state.isPresentedCalendar) {
+        PopUpOfCalendar(
+            onDismiss = { vm.onEvent(HomeEvent.ChangeStatusOfPopUpOfCalendar(false)) },
+            onSave = {
+                vm.onEvent(HomeEvent.SetDate(it))
+                vm.onEvent(HomeEvent.ChangeStatusOfPopUpOfCalendar(false))
+            }
+        )
     }
 
     AnimatedVisibility(state.isPresentedSettings) {

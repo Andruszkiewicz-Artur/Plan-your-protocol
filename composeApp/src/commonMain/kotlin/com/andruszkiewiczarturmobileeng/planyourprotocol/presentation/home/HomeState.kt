@@ -6,8 +6,6 @@ import kotlinx.datetime.Clock
 data class HomeState(
     val currentProtocol: ProtocolModule = ProtocolModule(),
     val protocolsList: List<ProtocolModule> = emptyList(),
-    val isPresentedReasons: Boolean = false,
-    val isPresentedTimer: Boolean = false,
     val isPresentedCalendar: Boolean = false,
     val isPresentedSettings: Boolean = false,
     val isEditing: Boolean = false,
