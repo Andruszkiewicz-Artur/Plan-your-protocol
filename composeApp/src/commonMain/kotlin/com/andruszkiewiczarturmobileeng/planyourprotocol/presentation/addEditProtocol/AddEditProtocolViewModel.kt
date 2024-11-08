@@ -60,6 +60,7 @@ class AddEditProtocolViewModel(
             is AddEditEvent.ChangeStatusOfPopUpOfCalendar -> _state.update { it.copy(isPresentedCalendar = event.isPresented) }
             is AddEditEvent.ChangeStatusOfPopUpOfReason -> _state.update { it.copy(isPresentedReasons = event.isPresented) }
             is AddEditEvent.ChangeStatusOfPopUpOfTimer -> _state.update { it.copy(isPresentedTimer = event.isPresented) }
+            is AddEditEvent.ChangeStatusOfPopUpOfQrCodeScanner -> _state.update { it.copy(isPresentedQrScanner = event.isPresented) }
             is AddEditEvent.SetUpDescription -> _state.update { it.copy(protocol = it.protocol.copy(description = event.value)) }
             AddEditEvent.SaveProtocol -> {
                 var currentProtocol = _state.value.protocol

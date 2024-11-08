@@ -2,7 +2,9 @@ package com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.addEditPr
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Save
@@ -26,7 +29,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.addEditProtocol.AddEditEvent
@@ -37,6 +43,9 @@ import com.andruszkiewiczarturmobileeng.planyourprotocol.util.convertMillisToDat
 import com.andruszkiewiczarturmobileeng.planyourprotocol.util.convertToTime
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.compose.viewmodel.koinViewModel
+import qrscanner.CameraLens
+import qrscanner.OverlayShape
+import qrscanner.QrScanner
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -106,15 +115,9 @@ fun AddEditProtocolPresentation(
         ) {
             AddingNewValueView(
                 dataInfo = state.protocol,
-                onClickShowPopUpOfReason = { vm.onEvent(AddEditEvent.ChangeStatusOfPopUpOfReason(it)) },
-                onClickShowPopUpOfTimer = { vm.onEvent(AddEditEvent.ChangeStatusOfPopUpOfTimer(it)) },
-                onClickShowPopUpOfDate = { vm.onEvent(AddEditEvent.ChangeStatusOfPopUpOfCalendar(it))  },
-                onChangeValueIdDocument = { vm.onEvent(AddEditEvent.SetIdOfProtocol(it)) },
-                onClickDateOfRealization = { vm.onEvent(AddEditEvent.SetTypeOfPlaningProtocol(it)) },
-                onClickUpdateView = { vm.onEvent(AddEditEvent.SetUpProtocol(state.protocol.idDocument)) },
                 presentUploadButton = state.updateProtocol.idDocument == state.protocol.idDocument,
-                onChangeDescription = { vm.onEvent(AddEditEvent.SetUpDescription(it)) },
-                isEditing = state.isEditingMode
+                isEditing = state.isEditingMode,
+                onClickEvent = { vm.onEvent(it) }
             )
 
             AnimatedVisibility(state.updateProtocol.idDocument == state.protocol.idDocument) {
@@ -194,6 +197,12 @@ fun AddEditProtocolPresentation(
                 vm.onEvent(AddEditEvent.SetDate(it))
                 vm.onEvent(AddEditEvent.ChangeStatusOfPopUpOfCalendar(false))
             }
+        )
+    }
+
+    AnimatedVisibility(state.isPresentedQrScanner) {
+        QrScannerView(
+            onEvent = { vm.onEvent(it) }
         )
     }
 }

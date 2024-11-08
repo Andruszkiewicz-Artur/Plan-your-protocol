@@ -19,4 +19,5 @@ sealed class AddEditEvent {
     data class ChangeStatusOfPopUpOfReason(val isPresented: Boolean): AddEditEvent()
     data class ChangeStatusOfPopUpOfTimer(val isPresented:Boolean): AddEditEvent()
     data class ChangeStatusOfPopUpOfCalendar(val isPresented: Boolean): AddEditEvent()
+    data class ChangeStatusOfPopUpOfQrCodeScanner(val isPresented: Boolean): AddEditEvent()
 }

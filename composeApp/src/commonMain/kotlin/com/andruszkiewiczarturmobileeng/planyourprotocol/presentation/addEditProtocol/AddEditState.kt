@@ -12,5 +12,6 @@ data class AddEditState(
     val isPresentedReasons: Boolean = false,
     val isPresentedTimer: Boolean = false,
     val isPresentedCalendar: Boolean = false,
+    val isPresentedQrScanner: Boolean = false,
     val isEditingMode: Boolean = false
 )

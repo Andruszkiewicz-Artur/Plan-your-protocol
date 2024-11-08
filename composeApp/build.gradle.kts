@@ -85,6 +85,8 @@ kotlin {
             api(libs.datastore)
 
             implementation(libs.navigation.compose)
+
+            implementation(libs.qr)
         }
     }
 }
@@ -129,11 +131,6 @@ android {
 room {
     schemaDirectory("$projectDir/schemas")
 }
-
-dependencies {
-    add("kspCommonMainMetadata", libs.room.compiler)
-}
-
 
 dependencies {
     add("kspCommonMainMetadata", libs.room.compiler)
