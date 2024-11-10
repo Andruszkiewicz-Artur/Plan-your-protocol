@@ -15,15 +15,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.CloseFullscreen
 import androidx.compose.material.icons.filled.FlashlightOff
 import androidx.compose.material.icons.filled.FlashlightOn
-import androidx.compose.material.icons.filled.FlipCameraAndroid
 import androidx.compose.material.icons.filled.FlipCameraIos
+import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -31,6 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,9 +37,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.andruszkiewiczarturmobileeng.planyourprotocol.controller.SnackbarController
+import com.andruszkiewiczarturmobileeng.planyourprotocol.controller.SnackbarEvent
 import com.andruszkiewiczarturmobileeng.planyourprotocol.presentation.addEditProtocol.AddEditEvent
+import kotlinx.coroutines.launch
 import qrscanner.CameraLens
-import qrscanner.OverlayShape
 import qrscanner.QrScanner
 
 @Composable
@@ -49,6 +50,8 @@ fun QrScannerView(
 ) {
     var cameraLens by remember { mutableStateOf(CameraLens.Back) }
     var flashLightOn by remember { mutableStateOf(false) }
+    var isPresentedPhotoLibrary by remember { mutableStateOf(false) }
+    val currentCoroutine = rememberCoroutineScope()
 
     Box(
         contentAlignment = Alignment.Center,
@@ -93,13 +96,23 @@ fun QrScannerView(
                 contentAlignment = Alignment.Center
             ) {
                 QrScanner(
-                    onFailure = { onEvent(AddEditEvent.ChangeStatusOfPopUpOfQrCodeScanner(false)) },
-                    imagePickerHandler = {  },
+                    onFailure = {
+                        currentCoroutine.launch {
+                            SnackbarController.sendEvent(
+                                SnackbarEvent(
+                                    it
+                                )
+                            )
+                        }
+
+                        onEvent(AddEditEvent.ChangeStatusOfPopUpOfQrCodeScanner(false))
+                    },
+                    imagePickerHandler = { isPresentedPhotoLibrary = it },
                     onCompletion = {
                         onEvent(AddEditEvent.SetIdOfProtocol(it))
                         onEvent(AddEditEvent.ChangeStatusOfPopUpOfQrCodeScanner(false))
                     },
-                    openImagePicker = false,
+                    openImagePicker = isPresentedPhotoLibrary,
                     cameraLens = cameraLens,
                     flashlightOn = flashLightOn,
                     overlayColor = Color.Transparent,
@@ -154,6 +167,19 @@ fun QrScannerView(
                             }
                         }
                     }
+                }
+
+                Spacer(modifier = Modifier.width(12.dp))
+
+                IconButton(
+                    onClick = {
+                        isPresentedPhotoLibrary = true
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.PhotoLibrary,
+                        contentDescription = null
+                    )
                 }
             }
         }
